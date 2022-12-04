@@ -1,0 +1,29 @@
+{
+    "mouse_moving_window_height": 300,
+    "mouse_moving_window_width": 300,
+
+    "box_indicating_limit": 2,
+    "box_indicating_mouse_move_duration": 0.4,
+    
+    "enable_mouse_move": false,
+    "mouse_move_bias": 1,
+    "mouse_move_duration_lower_limit": 0.5,
+    "mouse_move_duration_high_limit": 0.2,
+    
+    "enable_mouse_click": false,
+    "mouse_click_bias": 1,
+    
+    "enable_mouse_scroll": false,
+    "mouse_scroll_bias": 1,
+    
+    "enable_key_stroke": true,
+    "key_stroke_bias": 1,
+    "delay_between_key_stroke": 1,
+    
+    "enable_change_application": false,
+    "change_application_bias": 1,
+
+    "logging": false,
+
+    "debug": true
+}
