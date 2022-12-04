@@ -11,6 +11,53 @@ from actions import (
     application_change,
 )
 
+def calculate_safe_area_bounding_box(mouse_moving_window_height:int, mouse_moving_window_width:int) -> dict:
+    """
+    This method will calculate the bounding box parameter of the safe box in which the mouse moves in
+    The parameter will be return in the form of a dictionary. Then result dictionary will contain the
+    following parameter:
+
+        "x0": left border location on x-axis (int)
+        "top": top border location on y-axis (int)
+        "x1": right border location on x-axis (int)
+        "bottom": bottom border location on the y-axis (int)
+        "upper_left_corner": upper left corner coordinate in (tuple)  
+        "upper_right_corner": upper right corner coordinate in (tuple)
+        "lower_left_corner": lower left corner coordinate in (tuple)
+        "lower_right_corner": lower right corner coordinate in (tuple)
+    """
+    
+    mouse_moving_window_bbox = {
+        "x0": (screen_width - mouse_moving_window_width) // 2,
+        "top": (screen_height - mouse_moving_window_height) // 2,
+        "x1": ((screen_width - mouse_moving_window_width) // 2)
+        + mouse_moving_window_width,
+        "bottom": ((screen_height - mouse_moving_window_height) // 2)
+        + mouse_moving_window_width,
+        "upper_left_corner": (
+            (screen_width - mouse_moving_window_width) // 2,
+            (screen_height - mouse_moving_window_height) // 2,
+        ),
+        "upper_right_corner": (
+            ((screen_width - mouse_moving_window_width) // 2)
+            + mouse_moving_window_width,
+            (screen_height - mouse_moving_window_height) // 2,
+        ),
+        "lower_left_corner": (
+            (screen_width - mouse_moving_window_width) // 2,
+            ((screen_height - mouse_moving_window_height) // 2)
+            + mouse_moving_window_width,
+        ),
+        "lower_right_corner": (
+            ((screen_width - mouse_moving_window_width) // 2)
+            + mouse_moving_window_width,
+            ((screen_height - mouse_moving_window_height) // 2)
+            + mouse_moving_window_width,
+        ),
+    }
+
+    return mouse_moving_window_bbox
+
 
 def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     """
@@ -108,34 +155,7 @@ if __name__ == "__main__":
     mouse_moving_window_width = settings_data["mouse_moving_window_width"]
 
     # calculating a bounding-box in which mouse can move safely
-    mouse_moving_window_bbox = {
-        "x0": (screen_width - mouse_moving_window_width) // 2,
-        "top": (screen_height - mouse_moving_window_height) // 2,
-        "x1": ((screen_width - mouse_moving_window_width) // 2)
-        + mouse_moving_window_width,
-        "bottom": ((screen_height - mouse_moving_window_height) // 2)
-        + mouse_moving_window_width,
-        "upper_left_corner": (
-            (screen_width - mouse_moving_window_width) // 2,
-            (screen_height - mouse_moving_window_height) // 2,
-        ),
-        "upper_right_corner": (
-            ((screen_width - mouse_moving_window_width) // 2)
-            + mouse_moving_window_width,
-            (screen_height - mouse_moving_window_height) // 2,
-        ),
-        "lower_left_corner": (
-            (screen_width - mouse_moving_window_width) // 2,
-            ((screen_height - mouse_moving_window_height) // 2)
-            + mouse_moving_window_width,
-        ),
-        "lower_right_corner": (
-            ((screen_width - mouse_moving_window_width) // 2)
-            + mouse_moving_window_width,
-            ((screen_height - mouse_moving_window_height) // 2)
-            + mouse_moving_window_width,
-        ),
-    }
+    mouse_moving_window_bbox = calculate_safe_area_bounding_box(mouse_moving_window_height, mouse_moving_window_width)
 
     # showing the bounding-box borders to user
     box_indicating_limit = settings_data["box_indicating_limit"]
