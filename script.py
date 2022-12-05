@@ -103,15 +103,15 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     enabled_actions_choices = []
 
     if enable_mouse_move:
-        enabled_actions_choices.append("randome_mouse_move")
+        enabled_actions_choices = enabled_actions_choices + ["randome_mouse_move"]*settings_data["mouse_move_bias"]
     if enable_mouse_click:
-        enabled_actions_choices.append("randome_mouse_click")
+        enabled_actions_choices = enabled_actions_choices + ["randome_mouse_click"]*settings_data["mouse_click_bias"]
     if enable_mouse_scroll:
-        enabled_actions_choices.append("randome_mouse_scroll")
+        enabled_actions_choices = enabled_actions_choices + ["randome_mouse_scroll"]*settings_data["mouse_scroll_bias"]
     if enable_key_stroke:
-        enabled_actions_choices.append("key_stroke")
+        enabled_actions_choices = enabled_actions_choices + ["key_stroke"]*settings_data["key_stroke_bias"]
     if enable_change_application:
-        enabled_actions_choices.append("application_change")
+        enabled_actions_choices = enabled_actions_choices + ["application_change"]*settings_data["change_application_bias"]
 
     enabled_actions_choices_length = len(enabled_actions_choices)
 
