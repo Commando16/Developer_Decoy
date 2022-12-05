@@ -59,6 +59,36 @@ def calculate_safe_area_bounding_box(mouse_moving_window_height:int, mouse_movin
     return mouse_moving_window_bbox
 
 
+def show_safe_box(settings_data:dict, mouse_moving_window_bbox:dict)->None:
+    """
+    This function will show the border of the safe area bounding box 
+    """
+    box_indicating_limit = settings_data["box_indicating_limit"]
+    box_indicating_mouse_move_duration = settings_data["box_indicating_mouse_move_duration"]
+
+    for itr in range(box_indicating_limit):
+        pyautogui.moveTo(
+            mouse_moving_window_bbox["upper_left_corner"][0],
+            mouse_moving_window_bbox["upper_left_corner"][1],
+            duration=box_indicating_mouse_move_duration,
+        )
+        pyautogui.moveTo(
+            mouse_moving_window_bbox["upper_right_corner"][0],
+            mouse_moving_window_bbox["upper_right_corner"][1],
+            duration=box_indicating_mouse_move_duration,
+        )
+        pyautogui.moveTo(
+            mouse_moving_window_bbox["lower_right_corner"][0],
+            mouse_moving_window_bbox["lower_right_corner"][1],
+            duration=box_indicating_mouse_move_duration,
+        )
+        pyautogui.moveTo(
+            mouse_moving_window_bbox["lower_left_corner"][0],
+            mouse_moving_window_bbox["lower_left_corner"][1],
+            duration=box_indicating_mouse_move_duration,
+        )
+
+
 def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     """
     This is function will act/mimic the action of developer
@@ -158,32 +188,8 @@ if __name__ == "__main__":
     mouse_moving_window_bbox = calculate_safe_area_bounding_box(mouse_moving_window_height, mouse_moving_window_width)
 
     # showing the bounding-box borders to user
-    box_indicating_limit = settings_data["box_indicating_limit"]
-    box_indicating_mouse_move_duration = settings_data[
-        "box_indicating_mouse_move_duration"
-    ]
-    for itr in range(box_indicating_limit):
-        pyautogui.moveTo(
-            mouse_moving_window_bbox["upper_left_corner"][0],
-            mouse_moving_window_bbox["upper_left_corner"][1],
-            duration=box_indicating_mouse_move_duration,
-        )
-        pyautogui.moveTo(
-            mouse_moving_window_bbox["upper_right_corner"][0],
-            mouse_moving_window_bbox["upper_right_corner"][1],
-            duration=box_indicating_mouse_move_duration,
-        )
-        pyautogui.moveTo(
-            mouse_moving_window_bbox["lower_right_corner"][0],
-            mouse_moving_window_bbox["lower_right_corner"][1],
-            duration=box_indicating_mouse_move_duration,
-        )
-        pyautogui.moveTo(
-            mouse_moving_window_bbox["lower_left_corner"][0],
-            mouse_moving_window_bbox["lower_left_corner"][1],
-            duration=box_indicating_mouse_move_duration,
-        )
-
+    show_safe_box(settings_data = settings_data, mouse_moving_window_bbox = mouse_moving_window_bbox)
+    
     # checking with the user if the bounding-box is good for further use
     is_mouse_moving_window_bbox_correct = pyautogui.confirm(
         text="Your mouse will move in the shown area only. \nCheck if its good for your screen.",
@@ -200,7 +206,7 @@ if __name__ == "__main__":
         )
     else:
         pyautogui.alert(
-            text="Change the safe box dimention in setting.\nThen run the script again.",
+            text="Change the safe box dimension in setting.\nThen run the script again.",
             title="Alert...!",
             button="OK",
         )
