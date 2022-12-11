@@ -196,13 +196,13 @@ class App2(customtkinter.CTk):
 
         self.screen_size_info_height_lable = customtkinter.CTkLabel(
                                     master=self.system_info_frame, 
-                                    text=f"Height: {960}"
+                                    text=f"Height: {960} px"
                                 )
         self.screen_size_info_height_lable.grid(row=1, sticky="w", padx=10, pady=(5,5))
 
         self.screen_size_info_widthlable = customtkinter.CTkLabel(
                                     master=self.system_info_frame, 
-                                    text=f"Width: {1080}"
+                                    text=f"Width: {1080} px"
                                 )
         self.screen_size_info_widthlable.grid(row=2, sticky="w", padx=10, pady=(5,10))
         ## components end
