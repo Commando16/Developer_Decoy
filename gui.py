@@ -255,30 +255,34 @@ class App2(customtkinter.CTk):
     ## additional windows
     def mouse_move_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
+        window.title("action: mouse move configuration")
         window.geometry("400x200")
 
         # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="mouser move toplevel")
+        label = customtkinter.CTkLabel(window, text="mouse move toplevel")
         label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
 
     def mouse_click_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
+        window.title("action: mouse click configuration")
         window.geometry("400x200")
 
         # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="mouser click toplevel")
+        label = customtkinter.CTkLabel(window, text="mouse click toplevel")
         label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
 
     def mouse_scroll_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
+        window.title("action: mouse scroll configuration")
         window.geometry("400x200")
 
         # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="mouser scroll toplevel")
+        label = customtkinter.CTkLabel(window, text="mouse scroll toplevel")
         label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
 
     def key_stroke_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
+        window.title("action: key stroke configuration")
         window.geometry("400x200")
 
         # create label on CTkToplevel window
@@ -287,6 +291,7 @@ class App2(customtkinter.CTk):
 
     def application_change_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
+        window.title("action: application change configuration")
         window.geometry("400x200")
 
         # create label on CTkToplevel window
