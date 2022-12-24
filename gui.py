@@ -1,4 +1,5 @@
 import os
+import math
 import time
 import tkinter
 import customtkinter
@@ -15,7 +16,7 @@ class App2(customtkinter.CTk):
         super().__init__()
 
         self.title("Developer Decoy - Configuration panel")
-        self.minsize(400, 600)
+        # self.minsize(400, 600)
 
         # self.button = customtkinter.CTkButton(master=self, command=self.button_callback)
         # self.button.pack(padx=20, pady=20)
@@ -251,16 +252,92 @@ class App2(customtkinter.CTk):
     def button_callback(self, message):
         print(f"{message} used")
 
-    
+    def slider_event(self, value):
+        value = math.floor(value)
+        print(value)
+        
+
+
     ## additional windows
     def mouse_move_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: mouse move configuration")
-        window.geometry("400x200")
+        # window.geometry("400x200")
 
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="mouse move toplevel")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        ## mouse bias configuration
+        mouse_move_bias_label = customtkinter.CTkLabel(window, text="mouse bias")
+        mouse_move_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        # mouse bias indicator variable
+        mouse_move_bias_indicator_variable = tkinter.DoubleVar()
+        # mouse bias indicator
+        mouse_move_bias_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=mouse_move_bias_indicator_variable)
+        mouse_move_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        # mouse bias slider
+        mouse_move_bias_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=1, 
+                                to=10, 
+                                variable=mouse_move_bias_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        mouse_move_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
+
+        ## mouse move lower limit configuration
+        mouse_move_speed_lower_label = customtkinter.CTkLabel(window, text="mouse move speed lower limit")
+        mouse_move_speed_lower_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        # mouse move lower limit indicator variable
+        mouse_move_speed_lower_indicator_variable = tkinter.DoubleVar()
+        # mouse move lower limit indicator 
+        mouse_move_speed_lower_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=mouse_move_speed_lower_indicator_variable)
+        mouse_move_speed_lower_indicator_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e")
+        # mouse move lower limit slider
+        mouse_move_speed_lower_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=0.1, 
+                                to=1, 
+                                variable=mouse_move_speed_lower_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        mouse_move_speed_lower_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
+
+        ## mouse move upper limit configuration
+        mouse_move_speed_upper_label = customtkinter.CTkLabel(window, text="mouse move speed upper limit")
+        mouse_move_speed_upper_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        # mouse move upper limit indicator variable
+        mouse_move_speed_upper_indicator_variable = tkinter.DoubleVar()
+        # mouse move upper limit indicator 
+        mouse_move_speed_upper_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=mouse_move_speed_upper_indicator_variable)
+        mouse_move_speed_upper_indicator_entry.grid(row=4, column=1, padx=10, pady=5, sticky="e")
+        # mouse move upper limit slider
+        mouse_move_speed_upper_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=0.1, 
+                                to=1, 
+                                variable=mouse_move_speed_upper_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        mouse_move_speed_upper_slider.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+
+        ## instruction note label
+        note_label = customtkinter.CTkLabel(
+                                    master=window, 
+                                    text="note: To make mouse movement look more real,there must be variation in mouse movement speed. The program will take a random speed between lower limit and upper limit.",
+                                    wraplength=400,
+                                    text_color="#ffff88"
+                                    )
+        note_label.grid(row=6, columnspan=2, padx=10, pady=20, sticky="w")
+
+
+
 
     def mouse_click_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
