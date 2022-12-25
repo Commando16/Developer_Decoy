@@ -264,17 +264,17 @@ class App2(customtkinter.CTk):
         window.title("action: mouse move configuration")
         # window.geometry("400x200")
 
-        ## mouse bias configuration
-        mouse_move_bias_label = customtkinter.CTkLabel(window, text="mouse bias")
+        ## mouse move bias configuration
+        mouse_move_bias_label = customtkinter.CTkLabel(window, text="mouse move action bias")
         mouse_move_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        # mouse bias indicator variable
+        # mouse move bias indicator variable
         mouse_move_bias_indicator_variable = tkinter.DoubleVar()
-        # mouse bias indicator
+        # mouse move bias indicator
         mouse_move_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
                                         textvariable=mouse_move_bias_indicator_variable)
         mouse_move_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
-        # mouse bias slider
+        # mouse move bias slider
         mouse_move_bias_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=1, 
@@ -342,20 +342,52 @@ class App2(customtkinter.CTk):
     def mouse_click_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: mouse click configuration")
-        window.geometry("400x200")
 
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="mouse click toplevel")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        ## mouse click bias configuration
+        mouse_click_bias_label = customtkinter.CTkLabel(window, text="mouse click action bias")
+        mouse_click_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        # mouse click bias indicator variable
+        mouse_click_bias_indicator_variable = tkinter.DoubleVar()
+        # mouse click bias indicator
+        mouse_click_bias_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=mouse_click_bias_indicator_variable)
+        mouse_click_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        # mouse click bias slider
+        mouse_click_bias_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=1, 
+                                to=10, 
+                                variable=mouse_click_bias_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        mouse_click_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
     def mouse_scroll_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: mouse scroll configuration")
-        window.geometry("400x200")
-
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="mouse scroll toplevel")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        
+        ## mouse scroll bias configuration
+        mouse_scroll_bias_label = customtkinter.CTkLabel(window, text="mouse scroll action bias")
+        mouse_scroll_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        # mouse scroll bias indicator variable
+        mouse_scroll_bias_indicator_variable = tkinter.DoubleVar()
+        # mouse scroll bias indicator
+        mouse_scroll_bias_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=mouse_scroll_bias_indicator_variable)
+        mouse_scroll_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        # mouse scroll bias slider
+        mouse_scroll_bias_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=1, 
+                                to=10, 
+                                variable=mouse_scroll_bias_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        mouse_scroll_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
     def key_stroke_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
@@ -369,11 +401,27 @@ class App2(customtkinter.CTk):
     def application_change_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: application change configuration")
-        window.geometry("400x200")
 
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="application change toplevel")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        ## application change bias configuration
+        application_change_bias_label = customtkinter.CTkLabel(window, text="application change action bias")
+        application_change_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        # application change bias indicator variable
+        application_change_bias_indicator_variable = tkinter.DoubleVar()
+        # application change bias indicator
+        application_change_bias_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=application_change_bias_indicator_variable)
+        application_change_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        # application change bias slider
+        application_change_bias_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=1, 
+                                to=10, 
+                                variable=application_change_bias_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        application_change_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
 
 if __name__=="__main__":
