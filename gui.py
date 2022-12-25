@@ -283,7 +283,7 @@ class App2(customtkinter.CTk):
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
-        mouse_move_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
+        mouse_move_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
         ## mouse move lower limit configuration
         mouse_move_speed_lower_label = customtkinter.CTkLabel(window, text="mouse move speed lower limit")
@@ -304,7 +304,7 @@ class App2(customtkinter.CTk):
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
-        mouse_move_speed_lower_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
+        mouse_move_speed_lower_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
         ## mouse move upper limit configuration
         mouse_move_speed_upper_label = customtkinter.CTkLabel(window, text="mouse move speed upper limit")
@@ -325,7 +325,7 @@ class App2(customtkinter.CTk):
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
-        mouse_move_speed_upper_slider.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+        mouse_move_speed_upper_slider.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
         ## instruction note label
         note_label = customtkinter.CTkLabel(
