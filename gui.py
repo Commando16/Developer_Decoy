@@ -1,6 +1,7 @@
 import os
 import math
 import time
+import json
 import tkinter
 import customtkinter
 from PIL import Image
@@ -16,7 +17,6 @@ class App2(customtkinter.CTk):
         super().__init__()
 
         self.title("Developer Decoy - Configuration panel")
-        # self.minsize(400, 600)
 
         # self.button = customtkinter.CTkButton(master=self, command=self.button_callback)
         # self.button.pack(padx=20, pady=20)
@@ -32,7 +32,41 @@ class App2(customtkinter.CTk):
         # adding scroll
         # self.scroll_bar =  customtkinter.CTkScrollbar(self)
         # self.scroll_bar.grid(row=0, column=2, rowspan=3, columnspan=1)
-         
+
+        ####################
+        # tkinter variable #
+        ####################
+
+        ##-----
+        # mouse move bias indicator variable
+        self.mouse_move_bias_indicator_variable = tkinter.DoubleVar()
+
+        # mouse move lower limit indicator variable
+        self.mouse_move_speed_lower_indicator_variable = tkinter.DoubleVar()
+
+        # mouse move upper limit indicator variable
+        self.mouse_move_speed_upper_indicator_variable = tkinter.DoubleVar()
+
+        ##-----
+        # mouse click bias indicator variable
+        self.mouse_click_bias_indicator_variable = tkinter.DoubleVar()
+
+        ##----
+        # mouse scroll bias indicator variable
+        self.mouse_scroll_bias_indicator_variable = tkinter.DoubleVar()
+
+        ##----
+        # key stroke bias indicator variable
+        self.key_stroke_bias_indicator_variable = tkinter.DoubleVar()
+
+        # key stroke delay indicator variable
+        self.key_stroke_delay_indicator_variable = tkinter.DoubleVar()
+
+        ##-----
+        # application change bias indicator variable
+        self.application_change_bias_indicator_variable = tkinter.DoubleVar()
+        ####################
+
 
         #####################
         # system_info_frame #
@@ -68,6 +102,8 @@ class App2(customtkinter.CTk):
                                 )
         self.screen_size_info_widthlable.grid(row=2, sticky="w", padx=10, pady=(5,10))
         ## components end
+        #####################
+
 
         ########################
         # logging_config_frame #
@@ -96,6 +132,7 @@ class App2(customtkinter.CTk):
                             )
         self.logging_switch.grid(columnspan=1, padx=10, pady=10)
         ## components end
+        ########################
 
         ######################
         # debug_config_frame #
@@ -124,6 +161,7 @@ class App2(customtkinter.CTk):
                             )
         self.debug_switch.grid(columnspan=1, padx=10, pady=10)
         ## components end
+        ######################
 
 
         ########################
@@ -245,9 +283,26 @@ class App2(customtkinter.CTk):
         self.change_application_settings_button.grid(row=4, column=1,padx=10, pady=10, sticky="ns")
         # change application switch end
         ## components end
+        ########################
 
 
     ## methods
+    def update_settings( self, updated_setting_dict) -> None:
+        setting_file = open("settings_test.json", "r")
+        all_settings = json.loads(setting_file.read())
+        for setting in updated_setting_dict:
+            all_settings[setting] = updated_setting_dict[setting]
+        setting_file.close()
+
+        setting_file = open("settings_test.json", "w")
+        updated_setting = json.dumps(all_settings)
+        for character in updated_setting:
+            setting_file.write(character)
+
+            if character == ",":
+                setting_file.write("\n")
+
+        setting_file.close()
 
     def button_callback(self, message):
         print(f"{message} used")
@@ -255,6 +310,7 @@ class App2(customtkinter.CTk):
     def slider_event(self, value):
         value = math.floor(value)
         print(value)
+    
         
 
 
@@ -267,19 +323,17 @@ class App2(customtkinter.CTk):
         ## mouse move bias configuration
         mouse_move_bias_label = customtkinter.CTkLabel(window, text="mouse move action bias")
         mouse_move_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        # mouse move bias indicator variable
-        mouse_move_bias_indicator_variable = tkinter.DoubleVar()
         # mouse move bias indicator
         mouse_move_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=mouse_move_bias_indicator_variable)
+                                        textvariable=self.mouse_move_bias_indicator_variable)
         mouse_move_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # mouse move bias slider
         mouse_move_bias_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=1, 
                                 to=10, 
-                                variable=mouse_move_bias_indicator_variable,
+                                variable=self.mouse_move_bias_indicator_variable,
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
@@ -288,19 +342,17 @@ class App2(customtkinter.CTk):
         ## mouse move lower limit configuration
         mouse_move_speed_lower_label = customtkinter.CTkLabel(window, text="mouse move speed lower limit")
         mouse_move_speed_lower_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
-        # mouse move lower limit indicator variable
-        mouse_move_speed_lower_indicator_variable = tkinter.DoubleVar()
         # mouse move lower limit indicator 
         mouse_move_speed_lower_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=mouse_move_speed_lower_indicator_variable)
+                                        textvariable=self.mouse_move_speed_lower_indicator_variable)
         mouse_move_speed_lower_indicator_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e")
         # mouse move lower limit slider
         mouse_move_speed_lower_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=0.1, 
                                 to=1, 
-                                variable=mouse_move_speed_lower_indicator_variable,
+                                variable=self.mouse_move_speed_lower_indicator_variable,
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
@@ -309,19 +361,17 @@ class App2(customtkinter.CTk):
         ## mouse move upper limit configuration
         mouse_move_speed_upper_label = customtkinter.CTkLabel(window, text="mouse move speed upper limit")
         mouse_move_speed_upper_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
-        # mouse move upper limit indicator variable
-        mouse_move_speed_upper_indicator_variable = tkinter.DoubleVar()
         # mouse move upper limit indicator 
         mouse_move_speed_upper_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=mouse_move_speed_upper_indicator_variable)
+                                        textvariable=self.mouse_move_speed_upper_indicator_variable)
         mouse_move_speed_upper_indicator_entry.grid(row=4, column=1, padx=10, pady=5, sticky="e")
         # mouse move upper limit slider
         mouse_move_speed_upper_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=0.1, 
                                 to=1, 
-                                variable=mouse_move_speed_upper_indicator_variable,
+                                variable=self.mouse_move_speed_upper_indicator_variable,
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
@@ -336,8 +386,12 @@ class App2(customtkinter.CTk):
                                     )
         note_label.grid(row=6, columnspan=2, padx=10, pady=20, sticky="w")
 
-
-
+        # save button
+        button = customtkinter.CTkButton(master=window,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.button_callback)
+        button.grid(row=7, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def mouse_click_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
@@ -346,19 +400,17 @@ class App2(customtkinter.CTk):
         ## mouse click bias configuration
         mouse_click_bias_label = customtkinter.CTkLabel(window, text="mouse click action bias")
         mouse_click_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        # mouse click bias indicator variable
-        mouse_click_bias_indicator_variable = tkinter.DoubleVar()
         # mouse click bias indicator
         mouse_click_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=mouse_click_bias_indicator_variable)
+                                        textvariable=self.mouse_click_bias_indicator_variable)
         mouse_click_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # mouse click bias slider
         mouse_click_bias_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=1, 
                                 to=10, 
-                                variable=mouse_click_bias_indicator_variable,
+                                variable=self.mouse_click_bias_indicator_variable,
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
@@ -371,19 +423,17 @@ class App2(customtkinter.CTk):
         ## mouse scroll bias configuration
         mouse_scroll_bias_label = customtkinter.CTkLabel(window, text="mouse scroll action bias")
         mouse_scroll_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        # mouse scroll bias indicator variable
-        mouse_scroll_bias_indicator_variable = tkinter.DoubleVar()
         # mouse scroll bias indicator
         mouse_scroll_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=mouse_scroll_bias_indicator_variable)
+                                        textvariable=self.mouse_scroll_bias_indicator_variable)
         mouse_scroll_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # mouse scroll bias slider
         mouse_scroll_bias_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=1, 
                                 to=10, 
-                                variable=mouse_scroll_bias_indicator_variable,
+                                variable=self.mouse_scroll_bias_indicator_variable,
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
@@ -392,11 +442,43 @@ class App2(customtkinter.CTk):
     def key_stroke_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: key stroke configuration")
-        window.geometry("400x200")
 
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="key stroke toplevel")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        ## key stroke bias configuration
+        key_stroke_bias_label = customtkinter.CTkLabel(window, text="key stroke action bias")
+        key_stroke_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        # key stroke bias indicator
+        key_stroke_bias_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=self.key_stroke_bias_indicator_variable)
+        key_stroke_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        # key stroke change bias slider
+        key_stroke_bias_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=1, 
+                                to=10, 
+                                variable=self.key_stroke_bias_indicator_variable,
+                                number_of_steps=9, 
+                                command=partial(self.slider_event)
+                            )
+        key_stroke_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+
+        ## key stroke delay configuration
+        key_stroke_delay_label = customtkinter.CTkLabel(window, text="key stroke delay")
+        key_stroke_delay_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        # key stroke delay indicator
+        key_stroke_delay_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=self.key_stroke_delay_indicator_variable)
+        key_stroke_delay_indicator_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e")
+        # key stroke delay slider
+        key_stroke_delay_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=1, 
+                                to=5, 
+                                variable=self.key_stroke_delay_indicator_variable,
+                                command=partial(self.slider_event)
+                            )
+        key_stroke_delay_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
     def application_change_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
@@ -405,19 +487,17 @@ class App2(customtkinter.CTk):
         ## application change bias configuration
         application_change_bias_label = customtkinter.CTkLabel(window, text="application change action bias")
         application_change_bias_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        # application change bias indicator variable
-        application_change_bias_indicator_variable = tkinter.DoubleVar()
         # application change bias indicator
         application_change_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=application_change_bias_indicator_variable)
+                                        textvariable=self.application_change_bias_indicator_variable)
         application_change_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # application change bias slider
         application_change_bias_slider = customtkinter.CTkSlider(
                                 master=window, 
                                 from_=1, 
                                 to=10, 
-                                variable=application_change_bias_indicator_variable,
+                                variable=self.application_change_bias_indicator_variable,
                                 number_of_steps=9, 
                                 command=partial(self.slider_event)
                             )
@@ -428,7 +508,15 @@ if __name__=="__main__":
     # app = App()
     # app.mainloop()
     app2 = App2()
-    app2.mainloop()
+    # app2.mainloop()
+
+    # app2.update_settings(
+    #     {
+    #         "logging": "mene logging badal diya",
+    #         "debug": "mene loggin bhi badal diya"
+    #     }
+    # )
+
 
     # while True:
     #     app2.update()
