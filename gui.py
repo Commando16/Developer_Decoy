@@ -13,9 +13,9 @@ customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-b
 
 class App2(customtkinter.CTk):
 
-    def __init__(self):
+    def __init__(self, setting_file_path):
         super().__init__()
-
+        self.setting_file_path = setting_file_path
         self.title("Developer Decoy - Configuration panel")
 
         # self.button = customtkinter.CTkButton(master=self, command=self.button_callback)
@@ -37,7 +37,7 @@ class App2(customtkinter.CTk):
         # tkinter variable #
         ####################
 
-        ##-----
+        ## mouse move tkinter variable ------------------------------------
         # mouse move bias indicator variable
         self.mouse_move_bias_indicator_variable = tkinter.DoubleVar()
 
@@ -47,22 +47,22 @@ class App2(customtkinter.CTk):
         # mouse move upper limit indicator variable
         self.mouse_move_speed_upper_indicator_variable = tkinter.DoubleVar()
 
-        ##-----
+        ## mouse click tkinter variable -----------------------------------
         # mouse click bias indicator variable
         self.mouse_click_bias_indicator_variable = tkinter.DoubleVar()
 
-        ##----
+        ## mouse scroll tkinter variable ----------------------------------
         # mouse scroll bias indicator variable
         self.mouse_scroll_bias_indicator_variable = tkinter.DoubleVar()
 
-        ##----
+        ## key stroke tkinter variable ------------------------------------
         # key stroke bias indicator variable
         self.key_stroke_bias_indicator_variable = tkinter.DoubleVar()
 
         # key stroke delay indicator variable
         self.key_stroke_delay_indicator_variable = tkinter.DoubleVar()
 
-        ##-----
+        ## application change tkinter variable ----------------------------
         # application change bias indicator variable
         self.application_change_bias_indicator_variable = tkinter.DoubleVar()
         ####################
@@ -285,16 +285,51 @@ class App2(customtkinter.CTk):
         ## components end
         ########################
 
+        #---------------------------#
+        # initializing the settings #
+        #---------------------------#
+        self.initiate_setting_variable()
+        #############################
+
 
     ## methods
+    def initiate_setting_variable(self)-> None:
+        setting_file = open(self.setting_file_path, "r")
+        all_settings = json.loads(setting_file.read())
+
+        #-----
+        self.debug_switch_value.set("on") if all_settings["debug"] else self.debug_switch_value.set("off")
+        self.logging_switch_value.set("on") if all_settings["logging"] else self.logging_switch_value.set("off")
+        #-----
+        self.mouse_move_enable_switch_value.set("on") if all_settings["enable_mouse_move"] else self.mouse_move_enable_switch_value.set("off")
+        self.mouse_click_enable_switch_value.set("on") if all_settings["enable_mouse_click"] else self.mouse_click_enable_switch_value.set("off")
+        self.mouse_scroll_enable_switch_value.set("on") if all_settings["enable_mouse_scroll"] else self.mouse_scroll_enable_switch_value.set("off")
+        self.key_stroke_enable_switch_value.set("on") if all_settings["enable_key_stroke"] else self.key_stroke_enable_switch_value.set("off")
+        self.change_application_enable_switch_value.set("on") if all_settings["enable_change_application"] else self.change_application_enable_switch_value.set("off")
+        #-----
+        self.mouse_move_bias_indicator_variable.set(all_settings["mouse_move_bias"])
+        self.mouse_move_speed_lower_indicator_variable.set(all_settings["mouse_move_duration_lower_limit"])
+        self.mouse_move_speed_upper_indicator_variable.set(all_settings["mouse_move_duration_high_limit"])
+        #-----
+        self.mouse_click_bias_indicator_variable.set(all_settings["mouse_click_bias"])
+        #-----
+        self.mouse_scroll_bias_indicator_variable.set(all_settings["mouse_scroll_bias"])
+        #-----
+        self.key_stroke_bias_indicator_variable.set(all_settings["key_stroke_bias"])
+        self.key_stroke_delay_indicator_variable.set(all_settings["delay_between_key_stroke"])
+        #-----
+        self.application_change_bias_indicator_variable.set(all_settings["change_application_bias"])
+
+        setting_file.close()
+
     def update_settings( self, updated_setting_dict) -> None:
-        setting_file = open("settings_test.json", "r")
+        setting_file = open(self.setting_file_path, "r")
         all_settings = json.loads(setting_file.read())
         for setting in updated_setting_dict:
             all_settings[setting] = updated_setting_dict[setting]
         setting_file.close()
 
-        setting_file = open("settings_test.json", "w")
+        setting_file = open(self.setting_file_path, "w")
         updated_setting = json.dumps(all_settings)
         for character in updated_setting:
             setting_file.write(character)
@@ -303,6 +338,9 @@ class App2(customtkinter.CTk):
                 setting_file.write("\n")
 
         setting_file.close()
+
+    def mouse_move_update_setting(self)-> None:
+        pass
 
     def button_callback(self, message):
         print(f"{message} used")
@@ -507,8 +545,8 @@ class App2(customtkinter.CTk):
 if __name__=="__main__":
     # app = App()
     # app.mainloop()
-    app2 = App2()
-    # app2.mainloop()
+    app2 = App2(setting_file_path="settings_test.json")
+    app2.mainloop()
 
     # app2.update_settings(
     #     {
