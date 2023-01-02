@@ -28,6 +28,7 @@ class App2(customtkinter.CTk):
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
+        self.grid_rowconfigure(4, weight=1)
 
         # adding scroll
         # self.scroll_bar =  customtkinter.CTkScrollbar(self)
@@ -125,7 +126,6 @@ class App2(customtkinter.CTk):
         self.logging_switch = customtkinter.CTkSwitch(
                                 master=self.logging_config_frame, 
                                 text="Logging", 
-                                command=partial(self.button_callback, f"logging_switch {self.logging_switch_value.get()}"),
                                 variable=self.logging_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -154,7 +154,6 @@ class App2(customtkinter.CTk):
         self.debug_switch = customtkinter.CTkSwitch(
                                 master=self.debug_config_frame, 
                                 text="Debug", 
-                                command=partial(self.button_callback, f"debug_switch {self.debug_switch_value.get()}"),
                                 variable=self.debug_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -191,7 +190,6 @@ class App2(customtkinter.CTk):
         self.mouse_move_enable_switch = customtkinter.CTkSwitch(
                                 master=self.actions_config_frame, 
                                 text="mouse move", 
-                                command=partial(self.button_callback, f"mouse_move_switch {self.mouse_move_enable_switch_value.get()}"),
                                 variable=self.mouse_move_enable_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -210,7 +208,6 @@ class App2(customtkinter.CTk):
         self.mouse_click_enable_switch = customtkinter.CTkSwitch(
                                 master=self.actions_config_frame, 
                                 text="mouse click", 
-                                command=partial(self.button_callback, f"mouse_click_switch {self.mouse_click_enable_switch_value.get()}"),
                                 variable=self.mouse_click_enable_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -230,7 +227,6 @@ class App2(customtkinter.CTk):
         self.mouse_scroll_enable_switch = customtkinter.CTkSwitch(
                                 master=self.actions_config_frame, 
                                 text="mouse scroll", 
-                                command=partial(self.button_callback, f"mouse_scroll_switch {self.mouse_scroll_enable_switch_value.get()}"),
                                 variable=self.mouse_scroll_enable_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -249,7 +245,6 @@ class App2(customtkinter.CTk):
         self.key_stroke_enable_switch = customtkinter.CTkSwitch(
                                 master=self.actions_config_frame, 
                                 text="key stroke", 
-                                command=partial(self.button_callback, f"key_stroke_enable_switch {self.key_stroke_enable_switch_value.get()}"),
                                 variable=self.key_stroke_enable_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -268,7 +263,6 @@ class App2(customtkinter.CTk):
         self.change_application_enable_switch = customtkinter.CTkSwitch(
                                 master=self.actions_config_frame, 
                                 text="change application", 
-                                command=partial(self.button_callback, f"change_application_enable_switch {self.change_application_enable_switch_value.get()}"),
                                 variable=self.change_application_enable_switch_value, 
                                 onvalue="on", 
                                 offvalue="off"
@@ -282,6 +276,15 @@ class App2(customtkinter.CTk):
                                                 )
         self.change_application_settings_button.grid(row=4, column=1,padx=10, pady=10, sticky="ns")
         # change application switch end
+        
+        # save button
+        self.save_button = customtkinter.CTkButton(master=self,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.general_update_setting)
+        self.save_button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
+        # save button end
+
         ## components end
         ########################
 
@@ -338,9 +341,68 @@ class App2(customtkinter.CTk):
                 setting_file.write("\n")
 
         setting_file.close()
+    
+    def general_update_setting(self)-> None:
+        updated_setting_dict = {
+            "enable_mouse_move": True if self.mouse_move_enable_switch_value.get() == "on" else False,
+            "enable_mouse_click": True if self.mouse_click_enable_switch_value.get() == "on" else False,
+            "enable_mouse_scroll": True if self.mouse_scroll_enable_switch_value.get() == "on" else False,
+            "enable_key_stroke": True if self.key_stroke_enable_switch_value.get() == "on" else False,
+            "enable_change_application": True if self.change_application_enable_switch_value.get() == "on" else False,
+            "logging": True if self.logging_switch_value.get() == "on" else False,
+            "debug": True if self.debug_switch_value.get() == "on" else False
+        }
+
+        self.update_settings(updated_setting_dict)
 
     def mouse_move_update_setting(self)-> None:
-        pass
+        mouse_move_bias = int(self.mouse_move_bias_indicator_variable.get())
+        mouse_move_duration_lower_limit = round(self.mouse_move_speed_lower_indicator_variable.get(), 3)
+        mouse_move_duration_high_limit = round(self.mouse_move_speed_upper_indicator_variable.get(), 3)
+        
+        updated_setting_dict = {
+            "mouse_move_bias": mouse_move_bias,
+            "mouse_move_duration_lower_limit": mouse_move_duration_lower_limit,
+            "mouse_move_duration_high_limit": mouse_move_duration_high_limit
+        }
+
+        self.update_settings(updated_setting_dict)
+    
+    def mouse_click_update_setting(self)-> None:
+        mouse_click_bias = int(self.mouse_click_bias_indicator_variable.get())
+        
+        updated_setting_dict = {
+            "mouse_click_bias": mouse_click_bias
+        }
+        self.update_settings(updated_setting_dict)
+
+    def mouse_scroll_update_setting(self)-> None:
+        mouse_scroll_bias = int(self.mouse_scroll_bias_indicator_variable.get())
+        
+        updated_setting_dict = {
+            "mouse_scroll_bias": mouse_scroll_bias
+        }
+        self.update_settings(updated_setting_dict)
+
+    def key_stroke_update_setting(self)-> None:
+        key_stroke_bias = int(self.key_stroke_bias_indicator_variable.get())
+        delay_between_key_stroke = round(self.key_stroke_delay_indicator_variable.get(), 3)
+        
+        updated_setting_dict = {
+            "key_stroke_bias": key_stroke_bias,
+            "delay_between_key_stroke": delay_between_key_stroke,
+        }
+
+        self.update_settings(updated_setting_dict)
+    
+    def application_change_update_setting(self)-> None:
+        change_application_bias = int(self.application_change_bias_indicator_variable.get())
+        
+        updated_setting_dict = {
+            "change_application_bias": change_application_bias
+        }
+
+        self.update_settings(updated_setting_dict)
 
     def button_callback(self, message):
         print(f"{message} used")
@@ -428,7 +490,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Save",
-                                 command=self.button_callback)
+                                 command=self.mouse_move_update_setting)
         button.grid(row=7, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def mouse_click_setting_toplevel(self):
@@ -454,6 +516,13 @@ class App2(customtkinter.CTk):
                             )
         mouse_click_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
+        # save button
+        button = customtkinter.CTkButton(master=window,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.mouse_click_update_setting)
+        button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
+
     def mouse_scroll_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: mouse scroll configuration")
@@ -476,6 +545,13 @@ class App2(customtkinter.CTk):
                                 command=partial(self.slider_event)
                             )
         mouse_scroll_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+
+        # save button
+        button = customtkinter.CTkButton(master=window,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.mouse_scroll_update_setting)
+        button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def key_stroke_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
@@ -518,6 +594,13 @@ class App2(customtkinter.CTk):
                             )
         key_stroke_delay_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
+        # save button
+        button = customtkinter.CTkButton(master=window,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.key_stroke_update_setting)
+        button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
+
     def application_change_setting_toplevel(self):
         window = customtkinter.CTkToplevel(self)
         window.title("action: application change configuration")
@@ -540,6 +623,13 @@ class App2(customtkinter.CTk):
                                 command=partial(self.slider_event)
                             )
         application_change_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+
+        # save button
+        button = customtkinter.CTkButton(master=window,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.application_change_update_setting)
+        button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
 
 if __name__=="__main__":
