@@ -38,6 +38,23 @@ class App2(customtkinter.CTk):
         # tkinter variable #
         ####################
 
+        ## debug frame tkinter variable -----------------------------------
+        self.debug_switch_value = customtkinter.StringVar(value="off")
+
+        ## logging frame tkinter variable ---------------------------------
+        self.logging_switch_value = customtkinter.StringVar(value="off")
+
+        ## action frame tkinter variable ----------------------------------
+        self.mouse_move_enable_switch_value = customtkinter.StringVar(value="off")
+        self.mouse_click_enable_switch_value = customtkinter.StringVar(value="off")
+        self.mouse_scroll_enable_switch_value = customtkinter.StringVar(value="off")
+        self.key_stroke_enable_switch_value = customtkinter.StringVar(value="off")
+        self.change_application_enable_switch_value = customtkinter.StringVar(value="off")
+
+        ## safe area tkinter variable -------------------------------------
+        self.safe_area_height_value = customtkinter.IntVar()
+        self.safe_area_width_value = customtkinter.IntVar()
+
         ## mouse move tkinter variable ------------------------------------
         # mouse move bias indicator variable
         self.mouse_move_bias_indicator_variable = tkinter.DoubleVar()
@@ -118,10 +135,6 @@ class App2(customtkinter.CTk):
         self.logging_config_frame.grid(row=0, column=1, rowspan=1, padx=10, pady=10, sticky="new")
         ## frame ends
 
-        ## variables
-        self.logging_switch_value = customtkinter.StringVar(value="off")
-        ## variables end
-
         ## components
         self.logging_switch = customtkinter.CTkSwitch(
                                 master=self.logging_config_frame, 
@@ -145,10 +158,6 @@ class App2(customtkinter.CTk):
                                 )
         self.debug_config_frame.grid(row=0, column=1, rowspan=1, padx=10, pady=10, sticky="sew")
         ## frame ends
-
-        ## variables
-        self.debug_switch_value = customtkinter.StringVar(value="off")
-        ## variables end
 
         ## components
         self.debug_switch = customtkinter.CTkSwitch(
@@ -176,14 +185,6 @@ class App2(customtkinter.CTk):
         self.actions_config_frame.grid_columnconfigure(0, weight=6)
         self.actions_config_frame.grid_columnconfigure(1, weight=4)
         ## frame ends
-
-        ## variables
-        self.mouse_move_enable_switch_value = customtkinter.StringVar(value="off")
-        self.mouse_click_enable_switch_value = customtkinter.StringVar(value="off")
-        self.mouse_scroll_enable_switch_value = customtkinter.StringVar(value="off")
-        self.key_stroke_enable_switch_value = customtkinter.StringVar(value="off")
-        self.change_application_enable_switch_value = customtkinter.StringVar(value="off")
-        ## variables end
 
         ## components
         # mouse move switch
@@ -277,16 +278,66 @@ class App2(customtkinter.CTk):
         self.change_application_settings_button.grid(row=4, column=1,padx=10, pady=10, sticky="ns")
         # change application switch end
         
+
+        ## components end
+        ########################
+
+
+        ##########################
+        # safe_area_config_frame #
+        ##########################
+
+        ## frame
+        self.safe_area_config_frame = customtkinter.CTkFrame(
+                                    master=self,
+                                    corner_radius=10
+                                )
+        self.safe_area_config_frame.grid(columnspan=2, padx=10, pady=10, sticky="ewns")
+        ## frame ends
+
+        ## components
+        self.safe_area_info_lable = customtkinter.CTkLabel(
+                                    master=self.safe_area_config_frame, 
+                                    text="You safe area dimentions"
+                                )
+        self.safe_area_info_lable.grid(column=0, row=0, sticky="w", padx=10, pady=(10,5))
+
+        self.safe_area_height_lable = customtkinter.CTkLabel(
+                                    master=self.safe_area_config_frame, 
+                                    text=f"Height: {self.safe_area_height_value.get()} px"
+                                )
+        self.safe_area_height_lable.grid(column=0, row=1, sticky="w", padx=10, pady=(5,5))
+
+        self.safe_area_width_lable = customtkinter.CTkLabel(
+                                    master=self.safe_area_config_frame, 
+                                    text=f"Width: {self.safe_area_width_value.get()} px"
+                                )
+        self.safe_area_width_lable.grid(column=0, row=2, sticky="w", padx=10, pady=(5,5))
+
+
+        self.safe_area_settings_button = customtkinter.CTkButton(
+                                                    self.safe_area_config_frame, 
+                                                    text="",
+                                                    image=customtkinter.CTkImage(
+                                                        light_image= Image.open(os.path.join(".","assets","images","icons","setting.png"))), 
+                                                    command=partial(self.button_callback, "safe area setting button pressed")
+                                        )
+        self.safe_area_settings_button.grid(column=1, row=0, rowspan=3, padx=10, pady=10, sticky="ewns")
+        
+
+        ## components end
+        ######################
+
+        ###########################
+        # main config save button #
+        ###########################
         # save button
         self.save_button = customtkinter.CTkButton(master=self,
                                  corner_radius=8,
                                  text="Save",
                                  command=self.general_update_setting)
-        self.save_button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
+        self.save_button.grid(row=3, columnspan=2, padx=10, pady=10, sticky="ewns")
         # save button end
-
-        ## components end
-        ########################
 
         #---------------------------#
         # initializing the settings #
@@ -294,11 +345,17 @@ class App2(customtkinter.CTk):
         self.initiate_setting_variable()
         #############################
 
-
     ## methods
+    # initiating methods
     def initiate_setting_variable(self)-> None:
         setting_file = open(self.setting_file_path, "r")
         all_settings = json.loads(setting_file.read())
+
+        #-----
+        self.safe_area_height_value.set(all_settings["mouse_moving_window_height"])
+        self.safe_area_width_value.set(all_settings["mouse_moving_window_width"])
+        self.safe_area_height_lable.configure(text=f"Height: {self.safe_area_height_value.get()} px")
+        self.safe_area_width_lable.configure(text=f"Width: {self.safe_area_width_value.get()} px")
 
         #-----
         self.debug_switch_value.set("on") if all_settings["debug"] else self.debug_switch_value.set("off")
@@ -325,6 +382,7 @@ class App2(customtkinter.CTk):
 
         setting_file.close()
 
+    # updating method
     def update_settings( self, updated_setting_dict) -> None:
         setting_file = open(self.setting_file_path, "r")
         all_settings = json.loads(setting_file.read())
@@ -404,6 +462,7 @@ class App2(customtkinter.CTk):
 
         self.update_settings(updated_setting_dict)
 
+    # event callback
     def button_callback(self, message):
         print(f"{message} used")
 
@@ -637,14 +696,6 @@ if __name__=="__main__":
     # app.mainloop()
     app2 = App2(setting_file_path="settings_test.json")
     app2.mainloop()
-
-    # app2.update_settings(
-    #     {
-    #         "logging": "mene logging badal diya",
-    #         "debug": "mene loggin bhi badal diya"
-    #     }
-    # )
-
 
     # while True:
     #     app2.update()
