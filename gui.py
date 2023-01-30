@@ -485,7 +485,8 @@ class App2(customtkinter.CTk):
         # mouse move bias indicator
         mouse_move_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.mouse_move_bias_indicator_variable)
+                                        textvariable=self.mouse_move_bias_indicator_variable,
+                                        state='disabled')
         mouse_move_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # mouse move bias slider
         mouse_move_bias_slider = customtkinter.CTkSlider(
@@ -504,7 +505,8 @@ class App2(customtkinter.CTk):
         # mouse move lower limit indicator 
         mouse_move_speed_lower_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.mouse_move_speed_lower_indicator_variable)
+                                        textvariable=self.mouse_move_speed_lower_indicator_variable,
+                                        state='disabled')
         mouse_move_speed_lower_indicator_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e")
         # mouse move lower limit slider
         mouse_move_speed_lower_slider = customtkinter.CTkSlider(
@@ -523,7 +525,8 @@ class App2(customtkinter.CTk):
         # mouse move upper limit indicator 
         mouse_move_speed_upper_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.mouse_move_speed_upper_indicator_variable)
+                                        textvariable=self.mouse_move_speed_upper_indicator_variable,
+                                        state='disabled')
         mouse_move_speed_upper_indicator_entry.grid(row=4, column=1, padx=10, pady=5, sticky="e")
         # mouse move upper limit slider
         mouse_move_speed_upper_slider = customtkinter.CTkSlider(
@@ -562,7 +565,8 @@ class App2(customtkinter.CTk):
         # mouse click bias indicator
         mouse_click_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.mouse_click_bias_indicator_variable)
+                                        textvariable=self.mouse_click_bias_indicator_variable,
+                                        state='disabled')
         mouse_click_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # mouse click bias slider
         mouse_click_bias_slider = customtkinter.CTkSlider(
@@ -592,7 +596,8 @@ class App2(customtkinter.CTk):
         # mouse scroll bias indicator
         mouse_scroll_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.mouse_scroll_bias_indicator_variable)
+                                        textvariable=self.mouse_scroll_bias_indicator_variable,
+                                        state='disabled')
         mouse_scroll_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # mouse scroll bias slider
         mouse_scroll_bias_slider = customtkinter.CTkSlider(
@@ -622,7 +627,8 @@ class App2(customtkinter.CTk):
         # key stroke bias indicator
         key_stroke_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.key_stroke_bias_indicator_variable)
+                                        textvariable=self.key_stroke_bias_indicator_variable,
+                                        state='disabled')
         key_stroke_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # key stroke change bias slider
         key_stroke_bias_slider = customtkinter.CTkSlider(
@@ -641,7 +647,8 @@ class App2(customtkinter.CTk):
         # key stroke delay indicator
         key_stroke_delay_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.key_stroke_delay_indicator_variable)
+                                        textvariable=self.key_stroke_delay_indicator_variable,
+                                        state='disabled')
         key_stroke_delay_indicator_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e")
         # key stroke delay slider
         key_stroke_delay_slider = customtkinter.CTkSlider(
@@ -670,7 +677,8 @@ class App2(customtkinter.CTk):
         # application change bias indicator
         application_change_bias_indicator_entry = customtkinter.CTkEntry(
                                         master=window,
-                                        textvariable=self.application_change_bias_indicator_variable)
+                                        textvariable=self.application_change_bias_indicator_variable,
+                                        state='disabled')
         application_change_bias_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
         # application change bias slider
         application_change_bias_slider = customtkinter.CTkSlider(
