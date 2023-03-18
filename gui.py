@@ -562,10 +562,10 @@ class App2(customtkinter.CTk):
                                     )
         note_label.grid(row=6, columnspan=2, padx=10, pady=20, sticky="w")
 
-        # save button
+        # set changes button
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
-                                 text="Save",
+                                 text="Set Changes",
                                  command=self.mouse_move_update_setting)
         button.grid(row=7, columnspan=2, padx=10, pady=10, sticky="ewns")
 
@@ -593,10 +593,10 @@ class App2(customtkinter.CTk):
                             )
         mouse_click_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
-        # save button
+        # set changes button
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
-                                 text="Save",
+                                 text="Set Changes",
                                  command=self.mouse_click_update_setting)
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
@@ -624,10 +624,10 @@ class App2(customtkinter.CTk):
                             )
         mouse_scroll_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
-        # save button
+        # set changes button
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
-                                 text="Save",
+                                 text="Set Changes",
                                  command=self.mouse_scroll_update_setting)
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
@@ -674,10 +674,10 @@ class App2(customtkinter.CTk):
                             )
         key_stroke_delay_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
-        # save button
+        # set changes button
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
-                                 text="Save",
+                                 text="Set Changes",
                                  command=self.key_stroke_update_setting)
         button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
 
@@ -705,10 +705,10 @@ class App2(customtkinter.CTk):
                             )
         application_change_bias_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
-        # save button
+        # set changes button
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
-                                 text="Save",
+                                 text="Set Changes",
                                  command=self.application_change_update_setting)
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
@@ -756,10 +756,10 @@ class App2(customtkinter.CTk):
                             )
         safe_area_width_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
-        # save button
+        # set changes button
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
-                                 text="Save",
+                                 text="Set Changes",
                                  command=self.safe_area_update_setting)
         button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
 
