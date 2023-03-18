@@ -18,6 +18,9 @@ class App2(customtkinter.CTk):
         self.setting_file_path = setting_file_path
         self.title("Developer Decoy - Configuration panel")
 
+        self.actual_screen_height = 1080
+        self.actual_screen_width = 960 
+
         # self.button = customtkinter.CTkButton(master=self, command=self.button_callback)
         # self.button.pack(padx=20, pady=20)
 
@@ -320,7 +323,7 @@ class App2(customtkinter.CTk):
                                                     text="",
                                                     image=customtkinter.CTkImage(
                                                         light_image= Image.open(os.path.join(".","assets","images","icons","setting.png"))), 
-                                                    command=partial(self.button_callback, "safe area setting button pressed")
+                                                    command=self.safe_area_setting_toplevel
                                         )
         self.safe_area_settings_button.grid(column=1, row=0, rowspan=3, padx=10, pady=10, sticky="ewns")
         
@@ -458,6 +461,17 @@ class App2(customtkinter.CTk):
         
         updated_setting_dict = {
             "change_application_bias": change_application_bias
+        }
+
+        self.update_settings(updated_setting_dict)
+
+    def safe_area_update_setting(self)-> None:
+        mouse_moving_window_height = int(self.safe_area_height_value.get())
+        mouse_moving_window_width = int(self.safe_area_width_value.get())
+        
+        updated_setting_dict = {
+            "mouse_moving_window_height" : mouse_moving_window_height,
+            "mouse_moving_window_width" : mouse_moving_window_width
         }
 
         self.update_settings(updated_setting_dict)
@@ -697,6 +711,57 @@ class App2(customtkinter.CTk):
                                  text="Save",
                                  command=self.application_change_update_setting)
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
+
+    def safe_area_setting_toplevel(self):
+        window = customtkinter.CTkToplevel(self)
+        window.title("safe area configuration")
+
+        ## safe area height configuration
+        safe_area_height_label = customtkinter.CTkLabel(window, text="safe area height")
+        safe_area_height_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        # safe area height indicator
+        safe_area_height_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=self.safe_area_height_value,
+                                        state='disabled')
+        safe_area_height_indicator_entry.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        # safe area height slider
+        safe_area_height_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=100, # keeping it 100 px because less then that dont make sense (mouse moving area will be too less)
+                                to=self.actual_screen_height, 
+                                variable=self.safe_area_height_value,
+                                number_of_steps=self.actual_screen_height, 
+                                command=partial(self.slider_event)
+                            )
+        safe_area_height_slider.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+
+        ## safe area width configuration
+        safe_area_width_label = customtkinter.CTkLabel(window, text="safe area width")
+        safe_area_width_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        # safe area width indicator
+        safe_area_width_indicator_entry = customtkinter.CTkEntry(
+                                        master=window,
+                                        textvariable=self.safe_area_width_value,
+                                        state='disabled')
+        safe_area_width_indicator_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e")
+        # safe area width slider
+        safe_area_width_slider = customtkinter.CTkSlider(
+                                master=window, 
+                                from_=100, # keeping it 100 px because less then that dont make sense (mouse moving area will be too less)
+                                to=self.actual_screen_width, 
+                                variable=self.safe_area_width_value,
+                                number_of_steps=self.actual_screen_width, 
+                                command=partial(self.slider_event)
+                            )
+        safe_area_width_slider.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+
+        # save button
+        button = customtkinter.CTkButton(master=window,
+                                 corner_radius=8,
+                                 text="Save",
+                                 command=self.safe_area_update_setting)
+        button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
 
 
 if __name__=="__main__":
