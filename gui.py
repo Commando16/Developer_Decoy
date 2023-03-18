@@ -403,7 +403,7 @@ class App2(customtkinter.CTk):
 
         setting_file.close()
     
-    def general_update_setting(self)-> None:
+    def general_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         updated_setting_dict = {
             "enable_mouse_move": True if self.mouse_move_enable_switch_value.get() == "on" else False,
             "enable_mouse_click": True if self.mouse_click_enable_switch_value.get() == "on" else False,
@@ -415,8 +415,9 @@ class App2(customtkinter.CTk):
         }
 
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
 
-    def mouse_move_update_setting(self)-> None:
+    def mouse_move_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         mouse_move_bias = int(self.mouse_move_bias_indicator_variable.get())
         mouse_move_duration_lower_limit = round(self.mouse_move_speed_lower_indicator_variable.get(), 3)
         mouse_move_duration_high_limit = round(self.mouse_move_speed_upper_indicator_variable.get(), 3)
@@ -428,24 +429,27 @@ class App2(customtkinter.CTk):
         }
 
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
     
-    def mouse_click_update_setting(self)-> None:
+    def mouse_click_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         mouse_click_bias = int(self.mouse_click_bias_indicator_variable.get())
         
         updated_setting_dict = {
             "mouse_click_bias": mouse_click_bias
         }
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
 
-    def mouse_scroll_update_setting(self)-> None:
+    def mouse_scroll_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         mouse_scroll_bias = int(self.mouse_scroll_bias_indicator_variable.get())
         
         updated_setting_dict = {
             "mouse_scroll_bias": mouse_scroll_bias
         }
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
 
-    def key_stroke_update_setting(self)-> None:
+    def key_stroke_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         key_stroke_bias = int(self.key_stroke_bias_indicator_variable.get())
         delay_between_key_stroke = round(self.key_stroke_delay_indicator_variable.get(), 3)
         
@@ -455,8 +459,9 @@ class App2(customtkinter.CTk):
         }
 
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
     
-    def application_change_update_setting(self)-> None:
+    def application_change_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         change_application_bias = int(self.application_change_bias_indicator_variable.get())
         
         updated_setting_dict = {
@@ -464,8 +469,9 @@ class App2(customtkinter.CTk):
         }
 
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
 
-    def safe_area_update_setting(self)-> None:
+    def safe_area_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         mouse_moving_window_height = int(self.safe_area_height_value.get())
         mouse_moving_window_width = int(self.safe_area_width_value.get())
         
@@ -475,6 +481,7 @@ class App2(customtkinter.CTk):
         }
 
         self.update_settings(updated_setting_dict)
+        toplevel_window_object.destroy()
 
     # event callback
     def button_callback(self, message):
@@ -566,7 +573,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Set Changes",
-                                 command=self.mouse_move_update_setting)
+                                 command=partial(self.mouse_move_update_setting, toplevel_window_object=window))
         button.grid(row=7, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def mouse_click_setting_toplevel(self):
@@ -597,7 +604,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Set Changes",
-                                 command=self.mouse_click_update_setting)
+                                 command=partial(self.mouse_click_update_setting, toplevel_window_object=window))
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def mouse_scroll_setting_toplevel(self):
@@ -628,7 +635,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Set Changes",
-                                 command=self.mouse_scroll_update_setting)
+                                 command=partial(self.mouse_scroll_update_setting, toplevel_window_object=window))
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def key_stroke_setting_toplevel(self):
@@ -678,7 +685,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Set Changes",
-                                 command=self.key_stroke_update_setting)
+                                 command=partial(self.key_stroke_update_setting, toplevel_window_object=window))
         button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def application_change_setting_toplevel(self):
@@ -709,7 +716,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Set Changes",
-                                 command=self.application_change_update_setting)
+                                 command=partial(self.application_change_update_setting, toplevel_window_object=window))
         button.grid(row=2, columnspan=2, padx=10, pady=10, sticky="ewns")
 
     def safe_area_setting_toplevel(self):
@@ -760,7 +767,7 @@ class App2(customtkinter.CTk):
         button = customtkinter.CTkButton(master=window,
                                  corner_radius=8,
                                  text="Set Changes",
-                                 command=self.safe_area_update_setting)
+                                 command=partial(self.safe_area_update_setting, toplevel_window_object=window))
         button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
 
 
