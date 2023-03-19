@@ -5,6 +5,7 @@ import json
 import tkinter
 import customtkinter
 from PIL import Image
+import pyautogui
 
 from functools import partial
 
@@ -18,8 +19,8 @@ class App2(customtkinter.CTk):
         self.setting_file_path = setting_file_path
         self.title("Developer Decoy - Configuration panel")
 
-        self.actual_screen_height = 1080
-        self.actual_screen_width = 960 
+        self.actual_screen_height = pyautogui.size()[1]
+        self.actual_screen_width = pyautogui.size()[0]
 
         # self.button = customtkinter.CTkButton(master=self, command=self.button_callback)
         # self.button.pack(padx=20, pady=20)
