@@ -19,7 +19,6 @@ from actions import (
 ## Global variables ##
 ######################
 
-# is_user_in_command = False 
 refresh_copilot_takeover_timer = False
 ######################
 
@@ -114,36 +113,12 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     """
     This is function will act/mimic the action of developer
     """
-    # global is_user_in_command
+
     global refresh_copilot_takeover_timer
 
-    # user_idle_time = datetime.datetime.now()+datetime.timedelta(seconds = settings_data["copilot_trigger_time_in_seconds"])
     idle_time_start = datetime.datetime.now()
 
     # actions
-    
-    '''
-    while True:
-        # print(is_user_in_command, refresh_copilot_takeover_timer)
-        if refresh_copilot_takeover_timer:
-            idle_time_start = datetime.datetime.now()
-            refresh_copilot_takeover_timer = False
-        
-        if is_user_idle(given_time=idle_time_start, idle_time_limit_in_seconds=settings_data["copilot_trigger_time_in_seconds"]):
-            print("copilot is triggered")
-        else:
-            pass
-
-        # print("user in command ",is_user_in_command)
-        print("current time idle time difference", datetime.datetime.now() - idle_time_start, )
-        time.sleep(1)
-        # if is_user_in_command == True:
-            time.sleep(2)
-            # print(f"--------------{is_user_in_command}")
-            # is_user_in_command = False
-    '''
-
-    
     enable_mouse_move = settings_data["enable_mouse_move"]
     enable_mouse_click = settings_data["enable_mouse_click"]
     enable_mouse_scroll = settings_data["enable_mouse_scroll"]
@@ -187,11 +162,9 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
             if not settings_data["enable_copilot"]:
                 should_perform_next_move = True
             elif settings_data["enable_copilot"] and is_user_idle(given_time=idle_time_start, idle_time_limit_in_seconds=settings_data["copilot_trigger_time_in_seconds"]):
-                # is_user_in_command = False
                 should_perform_next_move = True
 
             print("current time idle time difference", datetime.datetime.now() - idle_time_start )
-            # print("is user in command: ", is_user_in_command )
             print("should_perform_move:", should_perform_next_move, "\n\n")
 
             if should_perform_next_move:
@@ -240,42 +213,31 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
 ######################
 
 def on_click(x, y, button, pressed):
-    # global is_user_in_command
     global refresh_copilot_takeover_timer
 
     print("mouse click event handler")
 
     if button == mouse.Button.right and pressed:
         refresh_copilot_takeover_timer = True
-        # is_user_in_command = True
     elif button == mouse.Button.left and pressed:
         refresh_copilot_takeover_timer = True
 
 def on_move(x, y):
-    # global is_user_in_command
     global refresh_copilot_takeover_timer
 
     print("mouse move event handler")
-
-    # if not is_user_in_command:
     refresh_copilot_takeover_timer = True
     
 def on_scroll(x, y, dx, dy):
-    # global is_user_in_command
     global refresh_copilot_takeover_timer
 
     print("mouse scroll event handler")
-
-    # if not is_user_in_command:
     refresh_copilot_takeover_timer = True
 
 def on_press(key):
-    # global is_user_in_command
     global refresh_copilot_takeover_timer
 
     print("keyboard event handler")
-
-    # if not is_user_in_command:
     refresh_copilot_takeover_timer = True
 
 ######################
@@ -300,14 +262,14 @@ if __name__ == "__main__":
     mouse_moving_window_bbox = calculate_safe_area_bounding_box(mouse_moving_window_height, mouse_moving_window_width)
 
     # showing the bounding-box borders to user
-    # show_safe_box(settings_data = settings_data, mouse_moving_window_bbox = mouse_moving_window_bbox)
+    show_safe_box(settings_data = settings_data, mouse_moving_window_bbox = mouse_moving_window_bbox)
     
     # checking with the user if the bounding-box is good for further use
-    # is_mouse_moving_window_bbox_correct = pyautogui.confirm(
-    #     text="Your mouse will move in the shown area only. \nCheck if its good for your screen.",
-    #     title="Confirm",
-    #     buttons=["Yes", "No"],
-    # )
+    is_mouse_moving_window_bbox_correct = pyautogui.confirm(
+        text="Your mouse will move in the shown area only. \nCheck if its good for your screen.",
+        title="Confirm",
+        buttons=["Yes", "No"],
+    )
     is_mouse_moving_window_bbox_correct = "Yes"
 
     # print(is_mouse_moving_window_bbox_correct)
