@@ -15,6 +15,8 @@ from actions import (
     application_change,
 )
 
+from utils import Settings
+
 ######################
 ## Global variables ##
 ######################
@@ -245,9 +247,8 @@ def on_press(key):
 if __name__ == "__main__":
 
     # reading settings from settings.json
-    f = open("settings.json")
-    settings_data = json.load(f)
-    f.close()
+    settings = Settings()
+    settings_data = settings.get_settings()
     print(settings_data)
     screen_height = pyautogui.size().height
     screen_width = pyautogui.size().width
