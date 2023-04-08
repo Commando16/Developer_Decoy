@@ -2,6 +2,10 @@ import pyautogui
 import json
 import random
 import time
+import threading
+from pynput import mouse
+from functools import partial
+import datetime
 
 from actions import (
     randome_mouse_move,
@@ -10,6 +14,16 @@ from actions import (
     key_stroke,
     application_change,
 )
+
+from utils import Settings
+
+######################
+## Global variables ##
+######################
+
+refresh_copilot_takeover_timer = False
+######################
+
 
 def calculate_safe_area_bounding_box(mouse_moving_window_height:int, mouse_moving_window_width:int) -> dict:
     """
@@ -89,10 +103,23 @@ def show_safe_box(settings_data:dict, mouse_moving_window_bbox:dict)->None:
         )
 
 
+def is_user_idle(given_time:datetime.datetime ,idle_time_limit_in_seconds:int):
+    current_time = datetime.datetime.now()
+
+    if((current_time-given_time).seconds >= idle_time_limit_in_seconds):
+        return True
+    return False
+
+
 def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     """
     This is function will act/mimic the action of developer
     """
+
+    global refresh_copilot_takeover_timer
+
+    idle_time_start = datetime.datetime.now()
+
     # actions
     enable_mouse_move = settings_data["enable_mouse_move"]
     enable_mouse_click = settings_data["enable_mouse_click"]
@@ -127,53 +154,101 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
         print(enabled_actions_choices_length)
 
         while True:
-            randome_choice = random.randrange(0, enabled_actions_choices_length)
-            print(randome_choice)
+            should_perform_next_move = False
 
-            if enabled_actions_choices[randome_choice] == "randome_mouse_move":
-                randome_mouse_move(
-                    random.randrange(
-                        mouse_moving_window_bbox["x0"], mouse_moving_window_bbox["x1"]
-                    ),
-                    random.randrange(
-                        mouse_moving_window_bbox["top"],
-                        mouse_moving_window_bbox["bottom"],
-                    ),
-                    random.uniform(
-                        settings_data["mouse_move_duration_lower_limit"],
-                        settings_data["mouse_move_duration_high_limit"]
+            if refresh_copilot_takeover_timer:
+                idle_time_start = datetime.datetime.now() #idle_time_start refreshed
+                refresh_copilot_takeover_timer = False
+
+            # deciding if the act the next move or not
+            if not settings_data["enable_copilot"]:
+                should_perform_next_move = True
+            elif settings_data["enable_copilot"] and is_user_idle(given_time=idle_time_start, idle_time_limit_in_seconds=settings_data["copilot_trigger_time_in_seconds"]):
+                should_perform_next_move = True
+
+            print("current time idle time difference", datetime.datetime.now() - idle_time_start )
+            print("should_perform_move:", should_perform_next_move, "\n\n")
+
+            if should_perform_next_move:
+                randome_choice = random.randrange(0, enabled_actions_choices_length)
+                print(randome_choice)
+
+                if enabled_actions_choices[randome_choice] == "randome_mouse_move":
+                    randome_mouse_move(
+                        random.randrange(
+                            mouse_moving_window_bbox["x0"], mouse_moving_window_bbox["x1"]
+                        ),
+                        random.randrange(
+                            mouse_moving_window_bbox["top"],
+                            mouse_moving_window_bbox["bottom"],
+                        ),
+                        random.uniform(
+                            settings_data["mouse_move_duration_lower_limit"],
+                            settings_data["mouse_move_duration_high_limit"]
+                        )
                     )
-                )
 
-            elif enabled_actions_choices[randome_choice] == "randome_mouse_click":
-                randome_mouse_click(
-                    random.randrange(
-                        mouse_moving_window_bbox["x0"], mouse_moving_window_bbox["x1"]
-                    ),
-                    random.randrange(
-                        mouse_moving_window_bbox["top"],
-                        mouse_moving_window_bbox["bottom"],
-                    ),
-                )
+                elif enabled_actions_choices[randome_choice] == "randome_mouse_click":
+                    randome_mouse_click(
+                        random.randrange(
+                            mouse_moving_window_bbox["x0"], mouse_moving_window_bbox["x1"]
+                        ),
+                        random.randrange(
+                            mouse_moving_window_bbox["top"],
+                            mouse_moving_window_bbox["bottom"],
+                        ),
+                    )
 
-            elif enabled_actions_choices[randome_choice] == "randome_mouse_scroll":
-                randome_mouse_scroll(random.randrange(-15, +15))
+                elif enabled_actions_choices[randome_choice] == "randome_mouse_scroll":
+                    randome_mouse_scroll(random.randrange(-15, +15))
 
-            elif enabled_actions_choices[randome_choice] == "key_stroke":
-                key_stroke(settings_data["delay_between_key_stroke"])
+                elif enabled_actions_choices[randome_choice] == "key_stroke":
+                    key_stroke(settings_data["delay_between_key_stroke"])
 
-            elif enabled_actions_choices[randome_choice] == "application_change":
-                application_change()
+                elif enabled_actions_choices[randome_choice] == "application_change":
+                    application_change()
 
             time.sleep(1)
 
+######################
+## Global variables ##
+######################
+
+def on_click(x, y, button, pressed):
+    global refresh_copilot_takeover_timer
+
+    print("mouse click event handler")
+
+    if button == mouse.Button.right and pressed:
+        refresh_copilot_takeover_timer = True
+    elif button == mouse.Button.left and pressed:
+        refresh_copilot_takeover_timer = True
+
+def on_move(x, y):
+    global refresh_copilot_takeover_timer
+
+    print("mouse move event handler")
+    refresh_copilot_takeover_timer = True
+    
+def on_scroll(x, y, dx, dy):
+    global refresh_copilot_takeover_timer
+
+    print("mouse scroll event handler")
+    refresh_copilot_takeover_timer = True
+
+def on_press(key):
+    global refresh_copilot_takeover_timer
+
+    print("keyboard event handler")
+    refresh_copilot_takeover_timer = True
+
+######################
 
 if __name__ == "__main__":
 
     # reading settings from settings.json
-    f = open("settings.json")
-    settings_data = json.load(f)
-    f.close()
+    settings = Settings()
+    settings_data = settings.get_settings()
     print(settings_data)
     screen_height = pyautogui.size().height
     screen_width = pyautogui.size().width
@@ -196,14 +271,30 @@ if __name__ == "__main__":
         title="Confirm",
         buttons=["Yes", "No"],
     )
+    is_mouse_moving_window_bbox_correct = "Yes"
 
-    print(is_mouse_moving_window_bbox_correct)
+    # print(is_mouse_moving_window_bbox_correct)
 
     if is_mouse_moving_window_bbox_correct == "Yes":
-        act(
-            settings_data=settings_data, 
-            mouse_moving_window_bbox=mouse_moving_window_bbox
-        )
+        if settings_data["enable_copilot"]:
+            # using pynput library mouse even detection
+            mouse_event_detection_thread = mouse.Listener(
+                                                on_move=on_move,
+                                                on_click=on_click,
+                                                on_scroll=on_scroll
+                                            )
+            decoy_thread = threading.Thread(target=partial(act, settings_data, mouse_moving_window_bbox))
+
+            mouse_event_detection_thread.start()
+            decoy_thread.start()
+
+            mouse_event_detection_thread.join()
+            decoy_thread.join()
+        else:
+            act(
+                settings_data=settings_data, 
+                mouse_moving_window_bbox=mouse_moving_window_bbox
+            )
     else:
         pyautogui.alert(
             text="Change the safe box dimension in setting.\nThen run the script again.",

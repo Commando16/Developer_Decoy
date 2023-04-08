@@ -8,15 +8,16 @@ from PIL import Image
 import pyautogui
 
 from functools import partial
+from utils import Settings
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
 
 class App2(customtkinter.CTk):
 
-    def __init__(self, setting_file_path):
+    def __init__(self, settings):
         super().__init__()
-        self.setting_file_path = setting_file_path
+        self.settings = settings
         self.title("Developer Decoy - Configuration panel")
 
         self.actual_screen_height = pyautogui.size()[1]
@@ -339,7 +340,7 @@ class App2(customtkinter.CTk):
         self.save_button = customtkinter.CTkButton(master=self,
                                  corner_radius=8,
                                  text="Save",
-                                 command=self.general_update_setting)
+                                 command=partial(self.general_update_setting, toplevel_window_object=self))
         self.save_button.grid(row=3, columnspan=2, padx=10, pady=10, sticky="ewns")
         # save button end
 
@@ -352,8 +353,7 @@ class App2(customtkinter.CTk):
     ## methods
     # initiating methods
     def initiate_setting_variable(self)-> None:
-        setting_file = open(self.setting_file_path, "r")
-        all_settings = json.loads(setting_file.read())
+        all_settings = self.settings.get_settings()
 
         #-----
         self.safe_area_height_value.set(all_settings["mouse_moving_window_height"])
@@ -383,26 +383,6 @@ class App2(customtkinter.CTk):
         self.key_stroke_delay_indicator_variable.set(all_settings["delay_between_key_stroke"])
         #-----
         self.application_change_bias_indicator_variable.set(all_settings["change_application_bias"])
-
-        setting_file.close()
-
-    # updating method
-    def update_settings( self, updated_setting_dict) -> None:
-        setting_file = open(self.setting_file_path, "r")
-        all_settings = json.loads(setting_file.read())
-        for setting in updated_setting_dict:
-            all_settings[setting] = updated_setting_dict[setting]
-        setting_file.close()
-
-        setting_file = open(self.setting_file_path, "w")
-        updated_setting = json.dumps(all_settings)
-        for character in updated_setting:
-            setting_file.write(character)
-
-            if character == ",":
-                setting_file.write("\n")
-
-        setting_file.close()
     
     def general_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         updated_setting_dict = {
@@ -415,7 +395,7 @@ class App2(customtkinter.CTk):
             "debug": True if self.debug_switch_value.get() == "on" else False
         }
 
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
 
     def mouse_move_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
@@ -429,7 +409,7 @@ class App2(customtkinter.CTk):
             "mouse_move_duration_high_limit": mouse_move_duration_high_limit
         }
 
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
     
     def mouse_click_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
@@ -438,7 +418,7 @@ class App2(customtkinter.CTk):
         updated_setting_dict = {
             "mouse_click_bias": mouse_click_bias
         }
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
 
     def mouse_scroll_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
@@ -447,7 +427,7 @@ class App2(customtkinter.CTk):
         updated_setting_dict = {
             "mouse_scroll_bias": mouse_scroll_bias
         }
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
 
     def key_stroke_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
@@ -459,7 +439,7 @@ class App2(customtkinter.CTk):
             "delay_between_key_stroke": delay_between_key_stroke,
         }
 
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
     
     def application_change_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
@@ -469,7 +449,7 @@ class App2(customtkinter.CTk):
             "change_application_bias": change_application_bias
         }
 
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
 
     def safe_area_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
@@ -481,7 +461,7 @@ class App2(customtkinter.CTk):
             "mouse_moving_window_width" : mouse_moving_window_width
         }
 
-        self.update_settings(updated_setting_dict)
+        self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
 
     # event callback
@@ -775,7 +755,8 @@ class App2(customtkinter.CTk):
 if __name__=="__main__":
     # app = App()
     # app.mainloop()
-    app2 = App2(setting_file_path="settings_test.json")
+    settings_object = Settings()
+    app2 = App2(settings=settings_object)
     app2.mainloop()
 
     # while True:
