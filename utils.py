@@ -1,4 +1,6 @@
 import json
+from os import path, mkdir
+from datetime import datetime
 
 class Settings:
     def __init__(self) -> None:
@@ -26,3 +28,27 @@ class Settings:
                 setting_file.write("\n")
 
         setting_file.close()
+
+class Logger:
+    def __init__(self, settings_data) -> None:
+        self.date_of_logging = datetime.today()
+        self.settings = settings_data
+
+        if not self.check_if_log_directory_available():
+            mkdir(path.join(".", "logs"))
+
+    def write(self, message) -> None:
+        if self.settings["logging"]:
+            log_file_path = path.join("logs", f"{self.date_of_logging.strftime('%b-%d-%Y')}_logs.txt")
+            with open( log_file_path, "a") as log_file:
+                log_file.write(f"{datetime.now()}:\n")
+                log_file.write(f"{message} \n")
+                log_file.write("--------------------\n\n")
+
+
+    def check_if_log_directory_available(self) -> bool:
+        directory_path = path.join(".", "logs")
+
+        if path.exists(directory_path):
+            return True
+        return False
