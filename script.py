@@ -15,7 +15,7 @@ from actions import (
     application_change,
 )
 
-from utils import Settings
+from utils import Settings, Logger
 
 ######################
 ## Global variables ##
@@ -119,6 +119,7 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     global refresh_copilot_takeover_timer
 
     idle_time_start = datetime.datetime.now()
+    logger = Logger(settings_data)
 
     # actions
     enable_mouse_move = settings_data["enable_mouse_move"]
@@ -143,6 +144,9 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     enabled_actions_choices_length = len(enabled_actions_choices)
 
     if enabled_actions_choices_length == 0:
+        if settings_data["logging"]:
+            logger.write("No action was enable. Script aborted")
+
         pyautogui.alert(
             text="No action is enabled in setting.\nEnable atleast one action.",
             title="Alert...!",
@@ -164,6 +168,7 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
             if not settings_data["enable_copilot"]:
                 should_perform_next_move = True
             elif settings_data["enable_copilot"] and is_user_idle(given_time=idle_time_start, idle_time_limit_in_seconds=settings_data["copilot_trigger_time_in_seconds"]):
+                logger.write(f"User is idle for {settings_data['copilot_trigger_time_in_seconds']}, Copilot took control.")
                 should_perform_next_move = True
 
             print("current time idle time difference", datetime.datetime.now() - idle_time_start )
@@ -185,7 +190,8 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
                         random.uniform(
                             settings_data["mouse_move_duration_lower_limit"],
                             settings_data["mouse_move_duration_high_limit"]
-                        )
+                        ),
+                        logger=logger
                     )
 
                 elif enabled_actions_choices[randome_choice] == "randome_mouse_click":
@@ -197,16 +203,17 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
                             mouse_moving_window_bbox["top"],
                             mouse_moving_window_bbox["bottom"],
                         ),
+                        logger=logger
                     )
 
                 elif enabled_actions_choices[randome_choice] == "randome_mouse_scroll":
-                    randome_mouse_scroll(random.randrange(-15, +15))
+                    randome_mouse_scroll(random.randrange(-15, +15), logger=logger)
 
                 elif enabled_actions_choices[randome_choice] == "key_stroke":
-                    key_stroke(settings_data["delay_between_key_stroke"])
+                    key_stroke(settings_data["delay_between_key_stroke"], logger=logger)
 
                 elif enabled_actions_choices[randome_choice] == "application_change":
-                    application_change()
+                    application_change(logger=logger)
 
             time.sleep(1)
 
@@ -249,12 +256,19 @@ if __name__ == "__main__":
     # reading settings from settings.json
     settings = Settings()
     settings_data = settings.get_settings()
+
+    logger = Logger(settings_data)
+
     print(settings_data)
+    logger.write("script started")
+    logger.write(f"with settings - \n{settings_data}".replace(",", "\n"))
+
     screen_height = pyautogui.size().height
     screen_width = pyautogui.size().width
 
     print(type(pyautogui.size().height))
     print(f"your screen resolution is {pyautogui.size()}")
+    logger.write(f"Screen resolution is {pyautogui.size()}")
 
     mouse_moving_window_height = settings_data["mouse_moving_window_height"]
     mouse_moving_window_width = settings_data["mouse_moving_window_width"]
@@ -271,33 +285,47 @@ if __name__ == "__main__":
         title="Confirm",
         buttons=["Yes", "No"],
     )
-    is_mouse_moving_window_bbox_correct = "Yes"
 
-    # print(is_mouse_moving_window_bbox_correct)
+    print(is_mouse_moving_window_bbox_correct)
 
     if is_mouse_moving_window_bbox_correct == "Yes":
+        logger.write("safe area is confirmed.")
         if settings_data["enable_copilot"]:
+            logger.write("Decoy-Copilot is enabled.")
             # using pynput library mouse even detection
-            mouse_event_detection_thread = mouse.Listener(
-                                                on_move=on_move,
-                                                on_click=on_click,
-                                                on_scroll=on_scroll
-                                            )
-            decoy_thread = threading.Thread(target=partial(act, settings_data, mouse_moving_window_bbox))
+            try:
+                mouse_event_detection_thread = mouse.Listener(
+                                                    on_move=on_move,
+                                                    on_click=on_click,
+                                                    on_scroll=on_scroll
+                                                )
+                decoy_thread = threading.Thread(target=partial(act, settings_data, mouse_moving_window_bbox))
 
-            mouse_event_detection_thread.start()
-            decoy_thread.start()
+                mouse_event_detection_thread.start()
+                decoy_thread.start()
 
-            mouse_event_detection_thread.join()
-            decoy_thread.join()
+                mouse_event_detection_thread.join()
+                decoy_thread.join()
+            except pyautogui.FailSafeException as e:
+                logger.write(f"FailSafeException occurred while in Decoy-Copilot mode. MousePointer must have reached in any of four corner of your primary screen. \n {e}")
+                #TODO: recalibarate mouse pointer to center
+            except Exception as e:
+                logger.write("exception occurred while in Decoy-Copilot mode.")
         else:
-            act(
-                settings_data=settings_data, 
-                mouse_moving_window_bbox=mouse_moving_window_bbox
-            )
+            try:
+                act(
+                    settings_data=settings_data, 
+                    mouse_moving_window_bbox=mouse_moving_window_bbox,
+                )   
+            except pyautogui.FailSafeException as e:
+                logger.write(f"FailSafeException occurred while in Decoy-Copilot mode. MousePointer must have reached in any of four corner of your primary screen. \n {e}")
+                #TODO: recalibarate mouse pointer to center
+            except Exception as e:
+                logger.write(f"exception occurred while in Decoy-Only mode. \n {e}")
     else:
         pyautogui.alert(
             text="Change the safe box dimension in setting.\nThen run the script again.",
             title="Alert...!",
             button="OK",
         )
+        logger.write("Safe area dimension were not approved. Script aborted.")
