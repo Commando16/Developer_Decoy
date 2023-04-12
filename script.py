@@ -22,6 +22,7 @@ from utils import Settings, Logger
 ######################
 
 refresh_copilot_takeover_timer = False
+is_user_in_command = True
 ######################
 
 
@@ -117,6 +118,7 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
     """
 
     global refresh_copilot_takeover_timer
+    global is_user_in_command
 
     idle_time_start = datetime.datetime.now()
     logger = Logger(settings_data)
@@ -167,8 +169,11 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
             # deciding if the act the next move or not
             if not settings_data["enable_copilot"]:
                 should_perform_next_move = True
-            elif settings_data["enable_copilot"] and is_user_idle(given_time=idle_time_start, idle_time_limit_in_seconds=settings_data["copilot_trigger_time_in_seconds"]):
+            elif (
+                settings_data["enable_copilot"] and 
+                is_user_idle(given_time=idle_time_start, idle_time_limit_in_seconds=settings_data["copilot_trigger_time_in_seconds"])):
                 logger.write(f"User is idle for {settings_data['copilot_trigger_time_in_seconds']}, Copilot took control.")
+                is_user_in_command = False
                 should_perform_next_move = True
 
             print("current time idle time difference", datetime.datetime.now() - idle_time_start )
@@ -223,31 +228,40 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
 
 def on_click(x, y, button, pressed):
     global refresh_copilot_takeover_timer
+    global is_user_in_command
+
+    logger = Logger(settings_data)
 
     print("mouse click event handler")
 
-    if button == mouse.Button.right and pressed:
+    if button == mouse.Button.right and pressed and (not is_user_in_command):
+        logger.write(f"user took the control back.")
+        is_user_in_command = True
         refresh_copilot_takeover_timer = True
-    elif button == mouse.Button.left and pressed:
+    elif button == mouse.Button.left and pressed and is_user_in_command:
         refresh_copilot_takeover_timer = True
 
 def on_move(x, y):
     global refresh_copilot_takeover_timer
+    global is_user_in_command
 
     print("mouse move event handler")
-    refresh_copilot_takeover_timer = True
+    if is_user_in_command:
+        refresh_copilot_takeover_timer = True
     
 def on_scroll(x, y, dx, dy):
     global refresh_copilot_takeover_timer
 
     print("mouse scroll event handler")
-    refresh_copilot_takeover_timer = True
+    if is_user_in_command:
+        refresh_copilot_takeover_timer = True
 
 def on_press(key):
     global refresh_copilot_takeover_timer
 
     print("keyboard event handler")
-    refresh_copilot_takeover_timer = True
+    if is_user_in_command:
+        refresh_copilot_takeover_timer = True
 
 ######################
 
