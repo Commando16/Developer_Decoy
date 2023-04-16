@@ -23,10 +23,13 @@
     "enable_change_application": false,
     "change_application_bias": 1,
 
-    "enable_copilot": true,
+    "enable_copilot": false,
     "copilot_trigger_time_in_seconds":10,
 
-    "logging": false,
+    "enable_script_stop_timer":true,
+    "script_stop_time_in_seconds": 10,
+
+    "logging": true,
 
     "debug": true
 }

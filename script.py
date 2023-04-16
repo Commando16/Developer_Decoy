@@ -159,8 +159,17 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
         print(enabled_actions_choices)
         print(enabled_actions_choices_length)
 
+        if settings_data["enable_script_stop_timer"]:
+                logger.write(f"Script stop timer is enabled. Script will be stop in {settings_data['script_stop_time_in_seconds']} seconds")
+
+        action_start_time = datetime.datetime.now()
+
         while True:
             should_perform_next_move = False
+
+            if (not settings_data["enable_copilot"]) and settings_data["enable_script_stop_timer"] and ((datetime.datetime.now()-action_start_time).total_seconds()>=settings_data["script_stop_time_in_seconds"]):
+                logger.write("Scrip stopped as per timer.")
+                break
 
             if refresh_copilot_takeover_timer:
                 idle_time_start = datetime.datetime.now() #idle_time_start refreshed
@@ -176,8 +185,8 @@ def act(settings_data:dict, mouse_moving_window_bbox:dict) -> None:
                 is_user_in_command = False
                 should_perform_next_move = True
 
-            print("current time idle time difference", datetime.datetime.now() - idle_time_start )
-            print("should_perform_move:", should_perform_next_move, "\n\n")
+            # print("current time idle time difference", datetime.datetime.now() - idle_time_start )
+            # print("should_perform_move:", should_perform_next_move, "\n\n")
 
             if should_perform_next_move:
                 randome_choice = random.randrange(0, enabled_actions_choices_length)
@@ -335,6 +344,7 @@ if __name__ == "__main__":
                 logger.write(f"FailSafeException occurred while in Decoy-Copilot mode. MousePointer must have reached in any of four corner of your primary screen. \n {e}")
                 #TODO: recalibarate mouse pointer to center
             except Exception as e:
+                print(e)
                 logger.write(f"exception occurred while in Decoy-Only mode. \n {e}")
     else:
         pyautogui.alert(
