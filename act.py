@@ -7,6 +7,8 @@ import time
 
 from utils import Settings, Logger
 from global_controllers import gui_visible, is_acting, is_user_in_command, refresh_copilot_takeover_timer
+# from userevent import UserEvent
+
 
 class Act:
     '''
@@ -119,7 +121,7 @@ class Act:
                 should_perform_next_move = False
 
                 if (not self.current_settings["enable_copilot"]) and self.current_settings["enable_script_stop_timer"] and ((datetime.datetime.now()-action_start_time).total_seconds()>=self.current_settings["script_stop_time_in_seconds"]):
-                    self.logger.write("Scrip stopped as per timer.")
+                    self.logger.write("Script stopped as per timer.")
                     break
 
                 if refresh_copilot_takeover_timer:
@@ -301,6 +303,8 @@ class UserEvent:
         global refresh_copilot_takeover_timer
         global is_user_in_command
 
+        print("mouse click event handler")
+
         if button == mouse.Button.right and pressed and (not is_user_in_command):
             self.logger.write(f"user took the control back.")
             is_user_in_command = True
@@ -312,11 +316,16 @@ class UserEvent:
         global refresh_copilot_takeover_timer
         global is_user_in_command
 
+        # print("mouse move event handler")
+
         if is_user_in_command:
             refresh_copilot_takeover_timer = True
         
     def on_scroll(self, x, y, dx, dy):
         global refresh_copilot_takeover_timer
+        global is_user_in_command
+
+        # print("mouse scroll event handler")
 
         if is_user_in_command:
             refresh_copilot_takeover_timer = True
@@ -324,6 +333,7 @@ class UserEvent:
     # as of now the keystroke event is not getting detected
     '''
     def on_press(self, key):
+        global is_user_in_command
         global refresh_copilot_takeover_timer
 
         print("keyboard event handler")

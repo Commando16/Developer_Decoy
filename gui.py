@@ -1,7 +1,5 @@
 import os
 import math
-import time
-import json
 import tkinter
 import customtkinter
 from PIL import Image

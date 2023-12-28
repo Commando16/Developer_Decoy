@@ -1,7 +1,4 @@
 import pyautogui
-import json
-import random
-import time
 import threading
 from pynput import mouse
 from functools import partial
@@ -18,6 +15,7 @@ from utils import Settings, Logger
 #   (Done) - Debugging and Logging (Combined)
 #   (Done)[named it as Act] - Action class
 #   (Done) - Make class for GUI handler
+#   - make separate file for userevent (unable to achieve that as on 28-12-2023) 
 
 # recalibrate mouse pointer to center (when corner exception occur)
 
@@ -58,7 +56,7 @@ if __name__ == "__main__":
             logger.write("Decoy-Copilot is enabled.")
             try:
                 gui_thread = threading.Thread(target=gui_handler.gui_initializer)
-                mouse_event_detection_thread = mouse.Listener(
+                user_mouse_event_detection_thread = mouse.Listener(
                                                     on_move=user_event.on_move,
                                                     on_click=user_event.on_click,
                                                     on_scroll=user_event.on_scroll
@@ -66,11 +64,11 @@ if __name__ == "__main__":
                 act_thread = threading.Thread(target=partial(act.act))
 
                 gui_thread.start()
-                mouse_event_detection_thread.start()
+                user_mouse_event_detection_thread.start()
                 act_thread.start()
 
                 gui_thread.join()
-                mouse_event_detection_thread.join()
+                user_mouse_event_detection_thread.join()
                 act_thread.join()
 
             except pyautogui.FailSafeException as e:
