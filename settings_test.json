@@ -17,7 +17,7 @@
  "change_application_bias": 3,
  "enable_copilot": true,
  "copilot_trigger_time_in_seconds": 5,
- "enable_script_stop_timer": true,
+ "enable_script_stop_timer": false,
  "script_stop_time_in_seconds": 10,
  "gui_enable": true,
  "logging": true,
