@@ -6,8 +6,11 @@ import tkinter
 import customtkinter
 from PIL import Image
 import pyautogui
-
 from functools import partial
+from tkinter import messagebox
+
+
+from global_controllers import gui_visible
 from utils import Settings
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
@@ -396,7 +399,7 @@ class App2(customtkinter.CTk):
         }
 
         self.settings.update_settings(updated_setting_dict)
-        toplevel_window_object.destroy()
+        # toplevel_window_object.destroy()
 
     def mouse_move_update_setting(self, toplevel_window_object:customtkinter.CTkToplevel)-> None:
         mouse_move_bias = int(self.mouse_move_bias_indicator_variable.get())
@@ -751,6 +754,47 @@ class App2(customtkinter.CTk):
                                  command=partial(self.safe_area_update_setting, toplevel_window_object=window))
         button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
 
+
+
+
+
+
+class GuiHandler():
+    
+    def __init__(self, settings) -> None:
+        self.settings = settings
+        self.current_settings = self.settings.get_settings()
+
+    def visible(self, event):
+        global gui_visible
+
+        print('visible')
+        if gui_visible == False:
+            gui_visible = True
+
+        print(f'gui_visible = {gui_visible}')
+
+    def invisible(self, event):
+        global gui_visible
+
+        print('invisible')
+        if gui_visible == True:
+            gui_visible = False
+        print(f'gui_visible = {gui_visible}')
+
+    def on_closing(self, app2: App2) -> None:
+        if messagebox.askokcancel("Quit", "Quitting this will also stop the script. Do you want to quit?"):
+            app2.destroy()
+
+    def gui_initializer(self) -> None:
+        app2 = App2(settings=self.settings)
+
+        app2.bind('<Map>', self.visible)
+        app2.bind('<Unmap>', self.invisible)
+        app2.protocol("WM_DELETE_WINDOW", partial(self.on_closing, app2))
+
+        if self.current_settings['gui_enable']:
+            app2.mainloop()
 
 if __name__=="__main__":
     # app = App()
