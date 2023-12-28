@@ -110,8 +110,17 @@ class Act:
             print(enabled_actions_choices)
             print(enabled_actions_choices_length)
 
+            if self.current_settings["enable_script_stop_timer"]:
+                self.logger.write(f"Script stop timer is enabled. Script will be stop in {self.current_settings['script_stop_time_in_seconds']} seconds")
+
+            action_start_time = datetime.datetime.now()
+
             while True:
                 should_perform_next_move = False
+
+                if (not self.current_settings["enable_copilot"]) and self.current_settings["enable_script_stop_timer"] and ((datetime.datetime.now()-action_start_time).total_seconds()>=self.current_settings["script_stop_time_in_seconds"]):
+                    self.logger.write("Scrip stopped as per timer.")
+                    break
 
                 if refresh_copilot_takeover_timer:
                     idle_time_start = datetime.datetime.now() #idle_time_start refreshed
