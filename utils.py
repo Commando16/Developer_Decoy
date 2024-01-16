@@ -30,9 +30,9 @@ class Settings:
         setting_file.close()
 
 class Logger:
-    def __init__(self, settings_data) -> None:
+    def __init__(self, settings:Settings) -> None:
         self.date_of_logging = datetime.today()
-        self.settings = settings_data
+        self.settings = settings.get_settings()
 
         if not self.check_if_log_directory_available():
             mkdir(path.join(".", "logs"))
@@ -44,6 +44,11 @@ class Logger:
                 log_file.write(f"{datetime.now()}:\n")
                 log_file.write(f"{message} \n")
                 log_file.write("--------------------\n\n")
+        if self.settings["debug"]:
+            print(f"{datetime.now()}:\n")
+            print(f"{message} \n")
+            print("--------------------\n\n")
+
 
 
     def check_if_log_directory_available(self) -> bool:
