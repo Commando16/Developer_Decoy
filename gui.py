@@ -8,7 +8,7 @@ from functools import partial
 from tkinter import messagebox
 
 
-from global_controllers import gui_visible
+from global_controllers import  GlobalControllers
 from utils import Settings
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
@@ -16,9 +16,10 @@ customtkinter.set_default_color_theme("green")  # Themes: blue (default), dark-b
 
 class App2(customtkinter.CTk):
 
-    def __init__(self, settings):
+    def __init__(self, settings, global_controllers: GlobalControllers):
         super().__init__()
         self.settings = settings
+        self.global_controllers = global_controllers
         self.title("Developer Decoy - Configuration panel")
 
         self.actual_screen_height = pyautogui.size()[1]
@@ -44,9 +45,6 @@ class App2(customtkinter.CTk):
         # tkinter variable #
         ####################
 
-        ## debug frame tkinter variable -----------------------------------
-        self.debug_switch_value = customtkinter.StringVar(value="off")
-
         ## logging frame tkinter variable ---------------------------------
         self.logging_switch_value = customtkinter.StringVar(value="off")
 
@@ -56,6 +54,10 @@ class App2(customtkinter.CTk):
         self.mouse_scroll_enable_switch_value = customtkinter.StringVar(value="off")
         self.key_stroke_enable_switch_value = customtkinter.StringVar(value="off")
         self.change_application_enable_switch_value = customtkinter.StringVar(value="off")
+
+        ## helper frame tkinter variable ----------------------------------
+        self.auto_stop_timer_switch_value = customtkinter.StringVar(value="off")
+        self.copilot_switch_value = customtkinter.StringVar(value="off")
 
         ## safe area tkinter variable -------------------------------------
         self.safe_area_height_value = customtkinter.IntVar()
@@ -129,6 +131,22 @@ class App2(customtkinter.CTk):
         #####################
 
 
+        ###########################
+        # script_start_atop_frame #
+        ###########################
+
+        ## components
+        self.start_stop_button = customtkinter.CTkButton(master=self,
+                                 corner_radius=8,
+                                 text="Start",
+                                 height= 70,
+                                 command=partial(self.start_stop, toplevel_window_object=self))
+        
+        self.start_stop_button.grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky="enw")
+        ## components end
+        ########################
+
+
         ########################
         # logging_config_frame #
         ########################
@@ -138,7 +156,7 @@ class App2(customtkinter.CTk):
                                     master=self,
                                     corner_radius=10
                                 )
-        self.logging_config_frame.grid(row=0, column=1, rowspan=1, padx=10, pady=10, sticky="new")
+        self.logging_config_frame.grid(row=0, column=1, rowspan=1, padx=10, pady=10, sticky="ews")
         ## frame ends
 
         ## components
@@ -152,30 +170,6 @@ class App2(customtkinter.CTk):
         self.logging_switch.grid(columnspan=1, padx=10, pady=10)
         ## components end
         ########################
-
-        ######################
-        # debug_config_frame #
-        ######################
-
-        ## frame
-        self.debug_config_frame = customtkinter.CTkFrame(
-                                    master=self,
-                                    corner_radius=10
-                                )
-        self.debug_config_frame.grid(row=0, column=1, rowspan=1, padx=10, pady=10, sticky="sew")
-        ## frame ends
-
-        ## components
-        self.debug_switch = customtkinter.CTkSwitch(
-                                master=self.debug_config_frame, 
-                                text="Debug", 
-                                variable=self.debug_switch_value, 
-                                onvalue="on", 
-                                offvalue="off"
-                            )
-        self.debug_switch.grid(columnspan=1, padx=10, pady=10)
-        ## components end
-        ######################
 
 
         ########################
@@ -334,6 +328,53 @@ class App2(customtkinter.CTk):
         ## components end
         ######################
 
+
+        #######################
+        # helper_config_frame #
+        ####################### 
+
+        ## frame
+        self.helper_config_frame = customtkinter.CTkFrame(
+                                    master=self,
+                                    corner_radius=10
+                                )
+        self.helper_config_frame.grid(row=3, columnspan=2, padx=10, pady=10, sticky="ewn")
+        ## frame ends
+
+        ## components
+        # auto stop timer switch
+        self.auto_stop_timer_switch = customtkinter.CTkSwitch(
+                                master=self.helper_config_frame, 
+                                text="auto stop timer", 
+                                variable=self.auto_stop_timer_switch_value, 
+                                onvalue="on", 
+                                offvalue="off"
+                            )
+        self.auto_stop_timer_switch.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.auto_stop_timer_settings_button = customtkinter.CTkButton(
+                                                    self.helper_config_frame, 
+                                                    text="",
+                                                    image=customtkinter.CTkImage(light_image= Image.open(os.path.join(".","assets","images","icons","setting.png"))), 
+                                                    command=lambda self:None
+                                                )
+        self.auto_stop_timer_settings_button.grid(row=0, column=1,padx=10, pady=10, sticky="nes")
+        # auto stop timer switch end
+
+        # copilot switch
+        self.copilot_switch = customtkinter.CTkSwitch(
+                                master=self.helper_config_frame, 
+                                text="copilot", 
+                                variable=self.copilot_switch_value, 
+                                onvalue="on", 
+                                offvalue="off"
+                            )
+        self.copilot_switch.grid(row=1,  column=0, padx=10, pady=10, sticky="w")
+        # copilot switch end
+
+        ## components end
+        ######################
+
+
         ###########################
         # main config save button #
         ###########################
@@ -342,7 +383,7 @@ class App2(customtkinter.CTk):
                                  corner_radius=8,
                                  text="Save",
                                  command=partial(self.general_update_setting, toplevel_window_object=self))
-        self.save_button.grid(row=3, columnspan=2, padx=10, pady=10, sticky="ewns")
+        self.save_button.grid(row=4, columnspan=2, padx=10, pady=10, sticky="ewns")
         # save button end
 
         #---------------------------#
@@ -363,7 +404,6 @@ class App2(customtkinter.CTk):
         self.safe_area_width_lable.configure(text=f"Width: {self.safe_area_width_value.get()} px")
 
         #-----
-        self.debug_switch_value.set("on") if all_settings["debug"] else self.debug_switch_value.set("off")
         self.logging_switch_value.set("on") if all_settings["logging"] else self.logging_switch_value.set("off")
         #-----
         self.mouse_move_enable_switch_value.set("on") if all_settings["enable_mouse_move"] else self.mouse_move_enable_switch_value.set("off")
@@ -392,8 +432,7 @@ class App2(customtkinter.CTk):
             "enable_mouse_scroll": True if self.mouse_scroll_enable_switch_value.get() == "on" else False,
             "enable_key_stroke": True if self.key_stroke_enable_switch_value.get() == "on" else False,
             "enable_change_application": True if self.change_application_enable_switch_value.get() == "on" else False,
-            "logging": True if self.logging_switch_value.get() == "on" else False,
-            "debug": True if self.debug_switch_value.get() == "on" else False
+            "logging": True if self.logging_switch_value.get() == "on" else False
         }
 
         self.settings.update_settings(updated_setting_dict)
@@ -464,6 +503,16 @@ class App2(customtkinter.CTk):
 
         self.settings.update_settings(updated_setting_dict)
         toplevel_window_object.destroy()
+
+    def start_stop(self, toplevel_window_object:customtkinter.CTkToplevel) -> None:
+        if self.global_controllers.acting_enabled:
+            self.start_stop_button.configure(text="Resting")
+            self.start_stop_button.configure(fg_color="#DC143C", hover_color="#DC143C")
+            self.global_controllers.acting_enabled = False
+        else:
+            self.start_stop_button.configure(text="Acting")
+            self.start_stop_button.configure(fg_color="#4CAF50", hover_color="#4CAF50")
+            self.global_controllers.acting_enabled = True
 
     # event callback
     def button_callback(self, message):
@@ -757,35 +806,32 @@ class App2(customtkinter.CTk):
 
 
 
-class GuiHandler():
+class GuiHandler:
     
-    def __init__(self, settings) -> None:
+    def __init__(self, settings, global_controllers: GlobalControllers) -> None:
+        self.global_controllers = global_controllers
         self.settings = settings
         self.current_settings = self.settings.get_settings()
 
     def visible(self, event):
-        global gui_visible
-
         print('visible')
-        if gui_visible == False:
-            gui_visible = True
+        if self.global_controllers.gui_visible == False:
+            self.global_controllers.gui_visible = True
 
-        print(f'gui_visible = {gui_visible}')
+        print(f'gui_visible = {self.global_controllers.gui_visible}')
 
     def invisible(self, event):
-        global gui_visible
-
         print('invisible')
-        if gui_visible == True:
-            gui_visible = False
-        print(f'gui_visible = {gui_visible}')
+        if self.global_controllers.gui_visible == True:
+            self.global_controllers.gui_visible = False
+        print(f'gui_visible = {self.global_controllers.gui_visible}')
 
     def on_closing(self, app2: App2) -> None:
         if messagebox.askokcancel("Quit", "Quitting this will also stop the script. Do you want to quit?"):
             app2.destroy()
 
     def gui_initializer(self) -> None:
-        app2 = App2(settings=self.settings)
+        app2 = App2(settings=self.settings, global_controllers=self.global_controllers)
 
         app2.bind('<Map>', self.visible)
         app2.bind('<Unmap>', self.invisible)
@@ -793,6 +839,10 @@ class GuiHandler():
 
         if self.current_settings['gui_enable']:
             app2.mainloop()
+
+
+
+
 
 if __name__=="__main__":
     # app = App()

@@ -6,7 +6,7 @@ import time
 
 
 from utils import Settings, Logger
-from global_controllers import gui_visible, is_acting, is_user_in_command, refresh_copilot_takeover_timer
+from global_controllers import GlobalControllers, refresh_copilot_takeover_timer
 # from userevent import UserEvent
 
 
@@ -15,8 +15,9 @@ class Act:
         Act class
     '''
 
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, global_controllers: GlobalControllers) -> None:
         self.settings = settings
+        self.global_controllers = global_controllers
         self.current_settings = self.settings.get_settings()
 
         self.logger = Logger(self.settings)
@@ -30,7 +31,7 @@ class Act:
         self.enable_key_stroke = self.current_settings["enable_key_stroke"]
         self.enable_change_application = self.current_settings["enable_change_application"]
 
-        self.userEvent = UserEvent(settings)
+        self.userEvent = UserEvent(settings, self.global_controllers)
 
         self.mouse_moving_window_bbox = self.calculate_safe_area_bounding_box() # mouse_moving_window_bbox mean "Mouse Moving_Window Bounding Box" (the area in which the mouse will move during acting/mimicry)
 
@@ -90,9 +91,6 @@ class Act:
         This is function will act/mimic the action of developer
         """
 
-        global refresh_copilot_takeover_timer
-        global is_user_in_command
-
         idle_time_start = datetime.datetime.now()
 
         # actions
@@ -124,9 +122,9 @@ class Act:
                     self.logger.write("Script stopped as per timer.")
                     break
 
-                if refresh_copilot_takeover_timer:
+                if self.global_controllers.refresh_copilot_takeover_timer:
                     idle_time_start = datetime.datetime.now() #idle_time_start refreshed
-                    refresh_copilot_takeover_timer = False
+                    self.global_controllers.refresh_copilot_takeover_timer = False
 
                 # deciding if the act the next move or not
                 if not self.current_settings["enable_copilot"]:
@@ -135,8 +133,11 @@ class Act:
                     self.current_settings["enable_copilot"] and 
                     self.userEvent.is_user_idle(given_time=idle_time_start)):
                     self.logger.write(f"User is idle for {self.current_settings['copilot_trigger_time_in_seconds']}, Copilot took control.")
-                    is_user_in_command = False
+                    self.global_controllers.is_user_in_command = False
                     should_perform_next_move = True
+
+                if self.current_settings["gui_enable"] and (not self.global_controllers.acting_enabled):
+                    should_perform_next_move = False
 
                 print("current time idle time difference", datetime.datetime.now() - idle_time_start )
                 print("should_perform_move:", should_perform_next_move, "\n\n")
@@ -285,8 +286,9 @@ class Act:
 
 class UserEvent:
 
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, global_controllers: GlobalControllers) -> None:
         self.settings = settings
+        self.global_controllers = global_controllers
         self.current_settings = self.settings.get_settings()
 
         self.logger = Logger(self.settings)
@@ -300,44 +302,32 @@ class UserEvent:
         return False
     
     def on_click(self, x, y, button, pressed):
-        global refresh_copilot_takeover_timer
-        global is_user_in_command
-
         print("mouse click event handler")
 
-        if button == mouse.Button.right and pressed and (not is_user_in_command):
+        if button == mouse.Button.right and pressed and (not self.global_controllers.is_user_in_command):
             self.logger.write(f"user took the control back.")
-            is_user_in_command = True
-            refresh_copilot_takeover_timer = True
-        elif button == mouse.Button.left and pressed and is_user_in_command:
-            refresh_copilot_takeover_timer = True
+            self.global_controllers.is_user_in_command = True
+            self.global_controllers.refresh_copilot_takeover_timer = True
+        elif button == mouse.Button.left and pressed and self.global_controllers.is_user_in_command:
+            self.global_controllers.refresh_copilot_takeover_timer = True
 
     def on_move(self, x, y):
-        global refresh_copilot_takeover_timer
-        global is_user_in_command
+        print("mouse move event handler")
 
-        # print("mouse move event handler")
-
-        if is_user_in_command:
-            refresh_copilot_takeover_timer = True
+        if self.global_controllers.is_user_in_command:
+            self.global_controllers.refresh_copilot_takeover_timer = True
         
     def on_scroll(self, x, y, dx, dy):
-        global refresh_copilot_takeover_timer
-        global is_user_in_command
+        print("mouse scroll event handler")
 
-        # print("mouse scroll event handler")
-
-        if is_user_in_command:
-            refresh_copilot_takeover_timer = True
+        if self.global_controllers.is_user_in_command:
+            self.global_controllers.refresh_copilot_takeover_timer = True
 
     # as of now the keystroke event is not getting detected
     '''
     def on_press(self, key):
-        global is_user_in_command
-        global refresh_copilot_takeover_timer
-
         print("keyboard event handler")
-        if is_user_in_command:
-            refresh_copilot_takeover_timer = True
+        if self.global_controllers.is_user_in_command:
+            self.global_controllers.refresh_copilot_takeover_timer = True
     '''
 

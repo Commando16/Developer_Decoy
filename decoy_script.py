@@ -9,18 +9,37 @@ from act import Act, UserEvent
 from gui import App2, GuiHandler
 from utils import Settings, Logger
 
+from global_controllers import GlobalControllers
+
+
 
 # Todo:
 #   (Done) - Setting class
 #   (Done) - Debugging and Logging (Combined)
 #   (Done)[named it as Act] - Action class
 #   (Done) - Make class for GUI handler
-#   - make separate file for userevent (unable to achieve that as on 28-12-2023) 
+#   - make separate file for userevent (unable to achieve that as on 28-12-2023)
 
-# recalibrate mouse pointer to center (when corner exception occur)
+#   - remove debugging from the GUI (GUI is for non-technical users. So, debugging don't make sense to them and if they want they can enable it from setting file).
+#   - add warnings for wrong settings.
+#   - recalibrate mouse pointer to center on failsafe exception. (when corner exception occur)
+#   - integrate the GUI with the main script.
+#   - remove (on_move, on_scroll, on_press) event handler because they are not in use any MousePointer
+
+# IDEAS +++++++++++++++++++++ 
+#   (Done) - add a Start Decoy button/Acting GUI.
+#   - add a restore default setting button GUI and argument for command line execution.
+#   - remove all the unnecessary print statement.
+#   - make it mac, window and linux executable.
+#   - add a self destruct.
+#   - add a feature where program will record the action for certain time duration and repeate the recorded action again and again.
+
 
 
 if __name__ == "__main__":
+
+    # initializing global controller
+    global_controllers = GlobalControllers()
     
     # initializing Setting
     settings = Settings()
@@ -33,13 +52,13 @@ if __name__ == "__main__":
     logger.write(f"with settings - \n{current_settings}".replace(",", "\n"))
 
     # initializing GUI handler
-    gui_handler = GuiHandler(settings=settings)
+    gui_handler = GuiHandler(settings=settings, global_controllers=global_controllers)
 
     # initializing Act
-    act = Act(settings=settings)
+    act = Act(settings=settings, global_controllers=global_controllers)
 
     # initalizing UserEvent
-    user_event = UserEvent(settings=settings)
+    user_event = UserEvent(settings=settings, global_controllers=global_controllers)
 
     # checking with the user if the bounding-box is good for further use
     act.show_safe_box()
